@@ -100,6 +100,7 @@ class OpCode(IntEnum):
     TANGELA     = 73  # PARITY      : Z = even_parity(ACC)
     VENONAT     = 74  # MSB         : ACC = highest_set_bit(ACC)
     VOLTORB     = 75  # LSB         : ACC = lowest_set_bit(ACC)
+    RATICATE    = 76  # NOP2        : no-op (second nop after MEW)
 
     # ─── FAMILIA 5: PILA (77-95) ───
     GLOOM       = 77  # PUSH        : push ACC
@@ -115,6 +116,13 @@ class OpCode(IntEnum):
     CLOYSTER    = 87  # STACK_TO_MEM: pop n=ACC bytes to MEM[PTR..]
     GRAVELER    = 88  # MEM_TO_STACK: push n=ACC bytes from MEM[PTR..]
     GYARADOS    = 89  # STACK_SNAP  : snapshot/restore stack
+
+    # ─── GAPS 90-95: POKEMONS GEN 1 FALTANTES ───
+    DRATINI     = 90  # DRAGON1     : no-op
+    DRAGONAIR   = 91  # DRAGON2     : no-op
+    DRAGONITE   = 92  # DRAGON3     : no-op
+    MEWTWO      = 93  # MEWTWO      : no-op
+    # 94-95 reservados
 
     # ─── FAMILIA 6: I/O (96-114) ───
     KABUTOPS    = 96  # IN          : ACC = getchar() or 0
@@ -248,6 +256,11 @@ NAME_TO_OPCODE = {
     'poliwag': OpCode.POLIWAG,
     'kakuna': OpCode.KAKUNA,
     'porygon': OpCode.PORYGON,
+    'raticate': OpCode.RATICATE,
+    'dratini': OpCode.DRATINI,
+    'dragonair': OpCode.DRAGONAIR,
+    'dragonite': OpCode.DRAGONITE,
+    'mewtwo': OpCode.MEWTWO,
     'krabby': OpCode.KRABBY,
     'lapras': OpCode.LAPRAS,
     'psyduck': OpCode.PSYDUCK,
@@ -417,6 +430,7 @@ _DISPATCH_TABLE: dict[OpCode, Callable] = {
     OpCode.TANGELA   : lambda self: self.exec_geodude(),
     OpCode.VENONAT   : lambda self: self.exec_graveler(),
     OpCode.VOLTORB   : lambda self: self.exec_golem(),
+    OpCode.RATICATE  : lambda self: self.exec_raticate(),
     OpCode.GLOOM     : lambda self: self.exec_slowpoke(),
     OpCode.GOLEM     : lambda self: self.exec_slowbro(),
     OpCode.WEEZING   : lambda self: self.exec_magnemite(),
@@ -430,6 +444,10 @@ _DISPATCH_TABLE: dict[OpCode, Callable] = {
     OpCode.CLOYSTER  : lambda self: self.exec_muk(),
     OpCode.GRAVELER  : lambda self: self.exec_shellder(),
     OpCode.GYARADOS  : lambda self: self.exec_cloyster(),
+    OpCode.DRATINI   : lambda self: self.exec_dratini(),
+    OpCode.DRAGONAIR : lambda self: self.exec_dragonair(),
+    OpCode.DRAGONITE : lambda self: self.exec_dragonite(),
+    OpCode.MEWTWO    : lambda self: self.exec_mewtwo(),
     OpCode.KABUTOPS  : lambda self: self.exec_gastly(),
     OpCode.HYPNO     : lambda self: self.exec_haunter(),
     OpCode.MAGIKARP  : lambda self: self.exec_gengar(),
@@ -978,6 +996,21 @@ class PokecodeVM:
             self.acc = (self.acc & -self.acc).bit_length() - 1
         self.flags.Z = (self.acc == 0)
         self.flags.N = False
+
+    def exec_raticate(self):    # NOP2 (second nop)
+        pass
+
+    def exec_dratini(self):     # NOP3
+        pass
+
+    def exec_dragonair(self):   # NOP4
+        pass
+
+    def exec_dragonite(self):   # NOP5
+        pass
+
+    def exec_mewtwo(self):      # NOP6
+        pass
 
     # ─── STACK ───
     def exec_slowpoke(self):    # PUSH
