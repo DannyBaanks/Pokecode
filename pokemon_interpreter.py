@@ -122,7 +122,8 @@ class OpCode(IntEnum):
     DRAGONAIR   = 91  # DRAGON2     : no-op
     DRAGONITE   = 92  # DRAGON3     : no-op
     MEWTWO      = 93  # MEWTWO      : no-op
-    # 94-95 reservados
+    PONYTA      = 94  # PONYTA      : no-op
+    RAPIDASH    = 95  # RAPIDASH    : no-op
 
     # ─── FAMILIA 6: I/O (96-114) ───
     KABUTOPS    = 96  # IN          : ACC = getchar() or 0
@@ -252,6 +253,8 @@ NAME_TO_OPCODE = {
     'persian': OpCode.PERSIAN,
     'pidgeot': OpCode.PIDGEOT,
     'pikachu': OpCode.PIKACHU,
+    'ponyta': OpCode.PONYTA,
+    'rapidash': OpCode.RAPIDASH,
     'kabuto': OpCode.KABUTO,
     'poliwag': OpCode.POLIWAG,
     'kakuna': OpCode.KAKUNA,
@@ -448,6 +451,8 @@ _DISPATCH_TABLE: dict[OpCode, Callable] = {
     OpCode.DRAGONAIR : lambda self: self.exec_dragonair(),
     OpCode.DRAGONITE : lambda self: self.exec_dragonite(),
     OpCode.MEWTWO    : lambda self: self.exec_mewtwo(),
+    OpCode.PONYTA    : lambda self: self.exec_ponyta(),
+    OpCode.RAPIDASH  : lambda self: self.exec_rapidash(),
     OpCode.KABUTOPS  : lambda self: self.exec_gastly(),
     OpCode.HYPNO     : lambda self: self.exec_haunter(),
     OpCode.MAGIKARP  : lambda self: self.exec_gengar(),
@@ -1010,6 +1015,12 @@ class PokecodeVM:
         pass
 
     def exec_mewtwo(self):      # NOP6
+        pass
+
+    def exec_ponyta(self):      # NOP7
+        pass
+
+    def exec_rapidash(self):    # NOP8
         pass
 
     # ─── STACK ───
