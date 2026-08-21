@@ -1,0 +1,113 @@
+# GitHub Actions CI for PokéCode
+
+name: PokéCode CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+      - name: Run tests
+        run: python -m pytest tests/ -v
+      - name: Verify Pokédex completeness
+        run: |
+          python -c "
+          from pokemon_interpreter import OpCode, NAME_TO_OPCODE
+          assert len(OpCode) == 151
+          assert len(NAME_TO_OPCODE) == 151
+          assert len(set(op.value for op in OpCode)) == 151
+          assert list(range(1,152)) == sorted(op.value for op in OpCode)
+          assert any(op.name.lower() == 'mew' and op.value == 151 for op in OpCode)
+          print('✓ Pokédex 151/151 verified')
+          print('✓ Opcodes 1..151 verified')
+          print('✓ Mew == 151 verified')
+          "
+      - name: Test Mew unary encoding
+        run: |
+          python -c "
+          from pokemon_interpreter import parse_pokecode, run_pokecode
+          # 1 Mew = MEW
+          assert run_pokecode('Mew') == ''
+          # 2 Mews = ABRA (MEM_RD)
+          assert run_pokecode('Mew Mew') == ''
+          # 47 Mews = MUK (INC)
+          out = run_pokecode(' '.join(['Mew'] * 47))
+          print('✓ Mew encoding works')
+          "
+      - name: Test Brainfuck translator
+        run: |
+          python bf2pokecode.py bf_hello.bf > /dev/null
+          echo '✓ BF translator runs'
+
+  logo:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Generate PokéCode logo
+        run: |
+          python gen_logo.py > logo_output.txt
+          cat logo_output.txt
+      - name: Update README with logo
+        run: |
+          # Extract just the ASCII art
+          python -c "
+          lines = [
+              '  .--.   ',
+              ' /    \\\\  ',
+              '|  @ @ | ',
+              '|      | ',
+              ' \\\\    /  ',
+              \"  '--'   \",
+              '',
+              'P O K E C O D E',
+              ''
+          ]
+          art = '\n'.join(lines)
+          print(art)
+          " > ascii_art.txt
+          cat ascii_art.txt
+      - name: Update README
+        run: |
+          # Insert logo at top of README
+          python -c "
+          with open('ascii_art.txt') as f:
+              art = f.read()
+          with open('README.md', 'r') as f:
+              readme = f.read()
+          
+          # Check if logo already exists
+          if 'P O K E C O D E' in readme:
+              print('Logo already in README')
+          else:
+              new_readme = '```\n' + art + '\n```\n\n' + readme
+              with open('README.md', 'w') as f:
+                  f.write(new_readme)
+              print('README updated with logo')
+          "
+      - name: Commit logo to README
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git diff --quiet && echo "No changes" || (git commit -m "ci: add PokéCode ASCII logo to README [skip ci]" && git push)
