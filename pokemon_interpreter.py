@@ -19,164 +19,167 @@ import time
 
 class OpCode(IntEnum):
     # ─── FAMILIA 1: MEMORIA (1-19) ───
-    BULBASAUR    = 1   # MEM_RD      : ACC = MEM[PTR]
-    IVYSAUR      = 2   # MEM_WR      : MEM[PTR] = ACC
-    VENUSAUR     = 3   # PTR_INC     : PTR += 1
-    CHARMANDER   = 4   # PTR_DEC     : PTR -= 1
-    CHARMELEON   = 5   # PTR_SET     : PTR = ACC
-    CHARIZARD    = 6   # PTR_GET     : ACC = PTR & 0xFF
-    SQUIRTLE     = 7   # MEM_CPY     : MEM[PTR+1] = MEM[PTR]
-    WARTORTLE    = 8   # MEM_SWP     : swap(MEM[PTR], MEM[PTR+1])
-    BLASTOISE    = 9   # MEM_CLR     : MEM[PTR] = 0
-    CATERPIE     = 10  # MEM_FILL    : for i in 0..ACC: MEM[PTR+i] = ACC
-    METAPOD      = 11  # MEM_FIND    : while MEM[PTR]!=ACC: PTR++ (max 256)
-    BUTTERFREE   = 12  # MEM_REV     : reverse(MEM[PTR..PTR+ACC])
-    WEEDLE       = 13  # PTR_JMP_FWD : PTR += ACC
-    KAKUNA       = 14  # PTR_JMP_BAK : PTR -= ACC
-    BEEDRILL     = 15  # PTR_HOME    : PTR = 0
-    PIDGEY       = 16  # MEM_PEEK    : ACC = MEM[ACC] (indirect)
-    PIDGEOTTO    = 17  # MEM_POKE    : MEM[ACC] = R0
-    PIDGEOT      = 18  # MEM_BLOCK   : copy 16 bytes PTR..PTR+15 to ACC..ACC+15
-    RATTATA      = 19  # MEM_SNAP    : push snapshot of MEM[0..31] to stack
+    ABRA        = 1   # MEM_RD      : ACC = MEM[PTR]
+    JYNX        = 2   # MEM_WR      : MEM[PTR] = ACC
+    ARBOK       = 3   # PTR_INC     : PTR += 1
+    GENGAR      = 4   # PTR_DEC     : PTR -= 1
+    MAGMAR      = 5   # PTR_SET     : PTR = ACC
+    MANKEY      = 6   # PTR_GET     : ACC = PTR & 0xFF
+    MEOWTH      = 7   # MEM_CPY     : MEM[PTR+1] = MEM[PTR]
+    ODDISH      = 8   # MEM_SWP     : swap(MEM[PTR], MEM[PTR+1])
+    EEVEE       = 9   # MEM_CLR     : MEM[PTR] = 0
+    PIDGEY      = 10  # MEM_FILL    : for i in 0..ACC: MEM[PTR+i] = ACC
+    PINSIR      = 11  # MEM_FIND    : while MEM[PTR]!=ACC: PTR++ (max 256)
+    RAICHU      = 12  # MEM_REV     : reverse(MEM[PTR..PTR+ACC])
+    RHYDON      = 13  # PTR_JMP_FWD : PTR += ACC
+    SEADRA      = 14  # PTR_JMP_BAK : PTR -= ACC
+    ZUBAT       = 15  # PTR_HOME    : PTR = 0
+    STARYU      = 16  # MEM_PEEK    : ACC = MEM[ACC] (indirect)
+    TAUROS      = 17  # MEM_POKE    : MEM[ACC] = R0
+    VULPIX      = 18  # MEM_BLOCK   : copy 16 bytes PTR..PTR+15 to ACC..ACC+15
+    WEEDLE      = 19  # MEM_SNAP    : push snapshot of MEM[0..31] to stack
 
     # ─── FAMILIA 2: CONTROL (20-38) ───
-    SPEAROW      = 20  # JMP         : PC = ACC (absoluto)
-    FEAROW       = 21  # JMP_REL     : PC += ACC (signed -128..127)
-    EKANS        = 22  # JZ          : if Z: PC = ACC
-    ARBOK        = 23  # JNZ         : if !Z: PC = ACC
-    PIKACHU      = 24  # JN          : if N: PC = ACC
-    RAICHU       = 25  # JC          : if C: PC = ACC
-    SANDSHREW    = 26  # JNC         : if !C: PC = ACC
-    SANDSLASH    = 27  # JV          : if V: PC = ACC
-    NIDORAN_F    = 28  # CALL        : push PC+1; PC = ACC
-    NIDORINA     = 29  # RET         : PC = pop call_stack
-    NIDOQUEEN    = 30  # RETZ        : if Z: RET
-    NIDORAN_M    = 31  # LOOP_BEG    : push PC; loop_count = ACC
-    NIDORINO     = 32  # LOOP_END    : loop_count--; if >0: PC = loop_start else pop
-    NIDOKING     = 33  # BREAK       : pop loop_stack; PC = after LOOP_END
-    CLEFAIRY     = 34  # CONTINUE    : PC = loop_start
-    CLEFABLE     = 35  # SWITCH      : PC = base + ACC (jump table)
-    VULPIX       = 36  # CASE        : no-op (marker)
-    NINETALES    = 37  # DEFAULT     : no-op (marker)
-    JIGGLYPUFF   = 38  # HALT        : stop execution
+    GOLBAT      = 20  # JMP         : PC = ACC (absoluto)
+    GRIMER      = 21  # JMP_REL     : PC += ACC (signed -128..127)
+    CUBONE      = 22  # JZ          : if Z: PC = ACC
+    DODRIO      = 23  # JNZ         : if !Z: PC = ACC
+    HORSEA      = 24  # JN          : if N: PC = ACC
+    ZAPDOS      = 25  # JC          : if C: PC = ACC
+    CHANSEY     = 26  # JNC         : if !C: PC = ACC
+    DEWGONG     = 27  # JV          : if V: PC = ACC
+    DIGLETT     = 28  # CALL        : push PC+1; PC = ACC
+    DROWZEE     = 29  # RET         : PC = pop call_stack
+    DUGTRIO     = 30  # RETZ        : if Z: RET
+    FEAROW      = 31  # LOOP_BEG    : push PC; loop_count = ACC
+    GASTLY      = 32  # LOOP_END    : loop_count--; if >0: PC = loop_start else pop
+    FLAREON     = 33  # BREAK       : pop loop_stack; PC = after LOOP_END
+    GEODUDE     = 34  # CONTINUE    : PC = loop_start
+    GOLDEEN     = 35  # SWITCH      : PC = base + ACC (jump table)
+    GOLDUCK     = 36  # CASE        : no-op (marker)
+    HAUNTER     = 37  # DEFAULT     : no-op (marker)
+    DODUO       = 38  # HALT        : stop execution
 
     # ─── FAMILIA 3: ARITMÉTICA (39-57) ───
-    WIGGLYTUFF   = 39  # ADD         : ACC = ACC + MEM[PTR]
-    ZUBAT        = 40  # SUB         : ACC = ACC - MEM[PTR]
-    GOLBAT       = 41  # ADC         : ACC = ACC + MEM[PTR] + C
-    ODDISH       = 42  # SBC         : ACC = ACC - MEM[PTR] - C
-    GLOOM        = 43  # MUL         : ACC = (ACC * MEM[PTR]) & 0xFF
-    VILEPLUME    = 44  # DIV         : ACC = ACC // MEM[PTR] (div0=0, C=1)
-    PARAS        = 45  # MOD         : ACC = ACC % MEM[PTR] (div0=0)
-    PARASECT     = 46  # INC         : ACC = (ACC + 1) & 0xFF
-    VENONAT      = 47  # DEC         : ACC = (ACC - 1) & 0xFF
-    VENOMOTH     = 48  # NEG         : ACC = (-ACC) & 0xFF
-    DIGLETT      = 49  # ABS         : ACC = abs(ACC) if ACC<128 else 256-ACC
-    DUGTRIO      = 50  # SIGN        : ACC = 1 if ACC<128 else 255
-    MEOWTH       = 51  # RAND        : ACC = random(0..MEM[PTR])
-    PERSIAN      = 52  # SEED        : random.seed(ACC)
-    PSYDUCK      = 53  # MAX         : ACC = max(ACC, MEM[PTR])
-    GOLDUCK      = 54  # MIN         : ACC = min(ACC, MEM[PTR])
-    MANKEY       = 55  # AVG         : ACC = (ACC + MEM[PTR]) >> 1
-    PRIMEAPE     = 56  # SQRT        : ACC = int(sqrt(ACC))
-    GROWLITHE    = 57  # POW2        : ACC = 1 << (ACC & 7)
+    IVYSAUR     = 39  # ADD         : ACC = ACC + MEM[PTR]
+    JOLTEON     = 40  # SUB         : ACC = ACC - MEM[PTR]
+    KADABRA     = 41  # ADC         : ACC = ACC + MEM[PTR] + C
+    KINGLER     = 42  # SBC         : ACC = ACC - MEM[PTR] - C
+    KOFFING     = 43  # MUL         : ACC = (ACC * MEM[PTR]) & 0xFF
+    MACHAMP     = 44  # DIV         : ACC = ACC // MEM[PTR] (div0=0, C=1)
+    MACHOKE     = 45  # MOD         : ACC = ACC % MEM[PTR] (div0=0)
+    MUK         = 46  # INC         : ACC = (ACC + 1) & 0xFF
+    ONIX        = 47  # DEC         : ACC = (ACC - 1) & 0xFF
+    EKANS       = 48  # NEG         : ACC = (-ACC) & 0xFF
+    MAROWAK     = 49  # ABS         : ACC = abs(ACC) if ACC<128 else 256-ACC
+    METAPOD     = 50  # SIGN        : ACC = 1 if ACC<128 else 255
+    MOLTRES     = 51  # RAND        : ACC = random(0..MEM[PTR])
+    MR_MIME     = 52  # SEED        : random.seed(ACC)
+    OMANYTE     = 53  # MAX         : ACC = max(ACC, MEM[PTR])
+    OMASTAR     = 54  # MIN         : ACC = min(ACC, MEM[PTR])
+    PERSIAN     = 55  # AVG         : ACC = (ACC + MEM[PTR]) >> 1
+    PIDGEOT     = 56  # SQRT        : ACC = int(sqrt(ACC))
+    PIKACHU     = 57  # POW2        : ACC = 1 << (ACC & 7)
 
     # ─── FAMILIA 4: LÓGICA BITWISE (58-76) ───
-    ARCANINE     = 58  # AND         : ACC &= MEM[PTR]
-    POLIWAG      = 59  # OR          : ACC |= MEM[PTR]
-    POLIWHIRL    = 60  # XOR         : ACC ^= MEM[PTR]
-    POLIWRATH    = 61  # NOT         : ACC = ~ACC & 0xFF
-    ABRA         = 62  # SHL         : C=bit7; ACC=(ACC<<1)&0xFF
-    KADABRA      = 63  # SHR         : C=bit0; ACC>>=1
-    ALAKAZAM     = 64  # ROL         : rotate left through carry
-    MACHOP       = 65  # ROR         : rotate right through carry
-    MACHOKE      = 66  # SHL_N       : ACC = (ACC << MEM[PTR]) & 0xFF
-    MACHAMP      = 67  # SHR_N       : ACC >>= MEM[PTR]
-    BELLSPROUT   = 68  # BIT_TST     : Z = !(ACC & (1<<MEM[PTR]))
-    WEEPINBELL   = 69  # BIT_SET     : ACC |= (1<<MEM[PTR])
-    VICTREEBEL   = 70  # BIT_CLR     : ACC &= ~(1<<MEM[PTR])
-    TENTACOOL    = 71  # BIT_TGL     : ACC ^= (1<<MEM[PTR])
-    TENTACRUEL   = 72  # BIT_CNT     : ACC = popcount(ACC)
-    GEODUDE      = 73  # PARITY      : Z = even_parity(ACC)
-    GRAVELER     = 74  # MSB         : ACC = highest_set_bit(ACC)
-    GOLEM        = 75  # LSB         : ACC = lowest_set_bit(ACC)
+    KABUTO      = 58  # AND         : ACC &= MEM[PTR]
+    POLIWAG     = 59  # OR          : ACC |= MEM[PTR]
+    KAKUNA      = 60  # XOR         : ACC ^= MEM[PTR]
+    PORYGON     = 61  # NOT         : ACC = ~ACC & 0xFF
+    KRABBY      = 62  # SHL         : C=bit7; ACC=(ACC<<1)&0xFF
+    LAPRAS      = 63  # SHR         : C=bit0; ACC>>=1
+    PSYDUCK     = 64  # ROL         : rotate left through carry
+    RATTATA     = 65  # ROR         : rotate right through carry
+    RHYHORN     = 66  # SHL_N       : ACC = (ACC << MEM[PTR]) & 0xFF
+    SCYTHER     = 67  # SHR_N       : ACC >>= MEM[PTR]
+    SEAKING     = 68  # BIT_TST     : Z = !(ACC & (1<<MEM[PTR]))
+    SLOWBRO     = 69  # BIT_SET     : ACC |= (1<<MEM[PTR])
+    SNORLAX     = 70  # BIT_CLR     : ACC &= ~(1<<MEM[PTR])
+    SPEAROW     = 71  # BIT_TGL     : ACC ^= (1<<MEM[PTR])
+    STARMIE     = 72  # BIT_CNT     : ACC = popcount(ACC)
+    TANGELA     = 73  # PARITY      : Z = even_parity(ACC)
+    VENONAT     = 74  # MSB         : ACC = highest_set_bit(ACC)
+    VOLTORB     = 75  # LSB         : ACC = lowest_set_bit(ACC)
 
     # ─── FAMILIA 5: PILA (77-95) ───
-    SLOWPOKE     = 77  # PUSH        : push ACC
-    SLOWBRO      = 78  # POP         : ACC = pop() or 0
-    MAGNEMITE    = 79  # DUP         : push(top)
-    MAGNETON     = 80  # SWP         : swap(top, second)
-    FARFETCHD    = 81  # ROT3        : rot3(top, second, third)
-    DODUO        = 82  # OVER        : push(second)
-    DODRIO       = 83  # NIP         : remove second
-    SEEL         = 84  # TUCK        : copy top under second
-    DEWGONG      = 85  # DEPTH       : ACC = len(stack)
-    GRIMER       = 86  # CLEAR_STACK : clear stack
-    MUK          = 87  # STACK_TO_MEM: pop n=ACC bytes to MEM[PTR..]
-    SHELLDER     = 88  # MEM_TO_STACK: push n=ACC bytes from MEM[PTR..]
-    CLOYSTER     = 89  # STACK_SNAP  : snapshot/restore stack
+    GLOOM       = 77  # PUSH        : push ACC
+    GOLEM       = 78  # POP         : ACC = pop() or 0
+    WEEZING     = 79  # DUP         : push(top)
+    ALAKAZAM    = 80  # SWP         : swap(top, second)
+    ARCANINE    = 81  # ROT3        : rot3(top, second, third)
+    ARTICUNO    = 82  # OVER        : push(second)
+    BEEDRILL    = 83  # NIP         : remove second
+    CATERPIE    = 84  # TUCK        : copy top under second
+    CLEFABLE    = 85  # DEPTH       : ACC = len(stack)
+    CLEFAIRY    = 86  # CLEAR_STACK : clear stack
+    CLOYSTER    = 87  # STACK_TO_MEM: pop n=ACC bytes to MEM[PTR..]
+    GRAVELER    = 88  # MEM_TO_STACK: push n=ACC bytes from MEM[PTR..]
+    GYARADOS    = 89  # STACK_SNAP  : snapshot/restore stack
 
     # ─── FAMILIA 6: I/O (96-114) ───
-    GASTLY       = 96  # IN          : ACC = getchar() or 0
-    HAUNTER      = 97  # OUT         : putchar(ACC)
-    GENGAR       = 98  # OUT_NUM     : print ACC as decimal
-    ONIX         = 99  # OUT_HEX     : print ACC as 2-digit hex
-    DROWZEE      = 100 # OUT_BIN     : print ACC as 8-bit binary
-    HYPNO        = 101 # OUT_MEM     : print MEM[PTR] as char
-    KRABBY       = 102 # DEBUG       : print state
-    KINGLER      = 103 # DUMP_MEM    : hex dump MEM[0..255]
-    VOLTORB      = 104 # DUMP_STACK  : print stack top 16
-    ELECTRODE    = 105 # DUMP_REGS   : print R0-R15
-    EXEGGCUTE    = 106 # READ_NUM    : read decimal → ACC
-    EXEGGUTOR    = 107 # READ_HEX    : read 2-char hex → ACC
-    CUBONE       = 108 # READ_LINE   : read line to MEM[PTR..]
-    MAROWAK      = 109 # WRITE_FILE  : syscall write
-    HITMONLEE    = 110 # READ_FILE   : syscall read
-    HITMONCHAN   = 111 # SLEEP       : sleep ACC ms
-    LICKITUNG    = 112 # TIME        : ACC = timestamp_low_byte
-    KOFFING      = 113 # RNG_BYTE    : ACC = random byte
-    WEEZING      = 114 # HASH        : ACC = crc8(MEM[PTR..PTR+15])
+    KABUTOPS    = 96  # IN          : ACC = getchar() or 0
+    HYPNO       = 97  # OUT         : putchar(ACC)
+    MAGIKARP    = 98  # OUT_NUM     : print ACC as decimal
+    MAGNETON    = 99  # OUT_HEX     : print ACC as 2-digit hex
+    NIDOKING    = 100 # OUT_BIN     : print ACC as 8-bit binary
+    DITTO       = 101 # OUT_MEM     : print MEM[PTR] as char
+    NIDORINA    = 102 # DEBUG       : print state
+    NIDORINO    = 103 # DUMP_MEM    : hex dump MEM[0..255]
+    PARASECT    = 104 # DUMP_STACK  : print stack top 16
+    PRIMEAPE    = 105 # DUMP_REGS   : print R0-R15
+    SHELLDER    = 106 # READ_NUM    : read decimal → ACC
+    SLOWPOKE    = 107 # READ_HEX    : read 2-char hex → ACC
+    SQUIRTLE    = 108 # READ_LINE   : read line to MEM[PTR..]
+    VAPOREON    = 109 # WRITE_FILE  : syscall write
+    VENOMOTH    = 110 # READ_FILE   : syscall read
+    VENUSAUR    = 111 # SLEEP       : sleep ACC ms
+    BLASTOISE   = 112 # TIME        : ACC = timestamp_low_byte
+    BULBASAUR   = 113 # RNG_BYTE    : ACC = random byte
+    CHARIZARD   = 114 # HASH        : ACC = crc8(MEM[PTR..PTR+15])
 
     # ─── FAMILIA 7: REGISTROS (115-133) ───
-    RHYHORN      = 115 # REG_GET     : ACC = R[MEM[PTR]&15]
-    RHYDON       = 116 # REG_SET     : R[MEM[PTR]&15] = ACC
-    CHANSEY      = 117 # REG_XCHG    : swap(ACC, R[MEM[PTR]&15])
-    TANGELA      = 118 # REG_INC     : R[MEM[PTR]&15]++
-    KANGASKHAN   = 119 # REG_DEC     : R[MEM[PTR]&15]--
-    HORSEA       = 120 # REG_ADD     : R[MEM[PTR]&15] += ACC
-    SEADRA       = 121 # REG_SUB     : R[MEM[PTR]&15] -= ACC
-    GOLDEEN      = 122 # REG_MOV     : R[MEM[PTR]&15] = R[ACC&15]
-    SEAKING      = 123 # REG_CPY     : copy R0..R15 to MEM[PTR..PTR+15]
-    STARYU       = 124 # REG_SWP     : swap R[MEM[PTR]&15], R[ACC&15]
-    STARMIE      = 125 # REG_CLR     : zero R0..R15
-    MR_MIME      = 126 # REG_SAVE    : push all R0..R15 to stack
-    SCYTHER      = 127 # REG_REST    : pop all R0..R15 from stack
-    JYNX         = 128 # REG_ROT     : rotate R0..R15 left by ACC
-    ELECTABUZZ   = 129 # REG_MUL     : R[MEM[PTR]&15] *= ACC
-    MAGMAR       = 130 # REG_DIV     : R[MEM[PTR]&15] //= ACC
-    PINSIR       = 131 # REG_MOD     : R[MEM[PTR]&15] %= ACC
-    TAUROS       = 132 # REG_AND     : R[MEM[PTR]&15] &= ACC
-    MAGIKARP     = 133 # REG_OR      : R[MEM[PTR]&15] |= ACC
+    PARAS       = 115 # REG_GET     : ACC = R[MEM[PTR]&15]
+    SEEL        = 116 # REG_SET     : R[MEM[PTR]&15] = ACC
+    ELECTRODE   = 117 # REG_XCHG    : swap(ACC, R[MEM[PTR]&15])
+    MACHOP      = 118 # REG_INC     : R[MEM[PTR]&15]++
+    EXEGGCUTE   = 119 # REG_DEC     : R[MEM[PTR]&15]--
+    EXEGGUTOR   = 120 # REG_ADD     : R[MEM[PTR]&15] += ACC
+    FARFETCHD   = 121 # REG_SUB     : R[MEM[PTR]&15] -= ACC
+    GROWLITHE   = 122 # REG_MOV     : R[MEM[PTR]&15] = R[ACC&15]
+    HITMONLEE   = 123 # REG_CPY     : copy R0..R15 to MEM[PTR..PTR+15]
+    LICKITUNG   = 124 # REG_SWP     : swap R[MEM[PTR]&15], R[ACC&15]
+    MAGNEMITE   = 125 # REG_CLR     : zero R0..R15
+    NIDOQUEEN   = 126 # REG_SAVE    : push all R0..R15 to stack
+    NIDORAN_F   = 127 # REG_REST    : pop all R0..R15 from stack
+    NIDORAN_M   = 128 # REG_ROT     : rotate R0..R15 left by ACC
+    NINETALES   = 129 # REG_MUL     : R[MEM[PTR]&15] *= ACC
+    PIDGEOTTO   = 130 # REG_DIV     : R[MEM[PTR]&15] //= ACC
+    POLIWHIRL   = 131 # REG_MOD     : R[MEM[PTR]&15] %= ACC
+    POLIWRATH   = 132 # REG_AND     : R[MEM[PTR]&15] &= ACC
+    SANDSHREW   = 133 # REG_OR      : R[MEM[PTR]&15] |= ACC
 
     # ─── FAMILIA 8: META (134-151) ───
-    GYARADOS     = 134 # SYS_EXIT    : exit(ACC)
-    LAPRAS       = 135 # SYS_ARG     : R0=argc; R1..=argv
-    DITTO        = 136 # CLONE       : fork copy
-    EEVEE        = 137 # MORPH       : change instruction set
-    VAPOREON     = 138 # TRACE_ON    : enable tracing
-    JOLTEON      = 139 # TRACE_OFF   : disable tracing
-    FLAREON      = 140 # PROFILE     : R0=cycles; R1=reads; R2=writes
-    PORYGON      = 141 # SELF_MOD    : rewrite instruction at PC+ACC to R0
-    OMANYTE      = 142 # CHECKPOINT  : save state to slot ACC (0-7)
-    OMASTAR      = 143 # RESTORE     : load state from slot ACC
-    KABUTO       = 144 # TIME_TRAVEL : rewind to checkpoint ACC
-    KABUTOPS     = 145 # PARALLEL    : spawn thread at PC=ACC
-    AERODACTYL   = 146 # ATOMIC_BEG  : disable interrupts
-    SNORLAX      = 147 # ATOMIC_END  : re-enable
-    ARTICUNO     = 148 # FREEZE      : pause other threads
-    ZAPDOS       = 149 # THAW        : resume threads
-    MOLTRES      = 150 # BURN        : secure erase all
-    MEW          = 151 # META        : NOP + flag "Mew encountered"
+    SANDSLASH   = 134 # SYS_EXIT    : exit(ACC)
+    TENTACOOL   = 135 # SYS_ARG     : R0=argc; R1..=argv
+    VILEPLUME   = 136 # CLONE       : fork copy
+    WARTORTLE   = 137 # MORPH       : change instruction set
+    AERODACTYL  = 138 # TRACE_ON    : enable tracing
+    BELLSPROUT  = 139 # TRACE_OFF   : disable tracing
+    BUTTERFREE  = 140 # PROFILE     : R0=cycles; R1=reads; R2=writes
+    CHARMANDER  = 141 # SELF_MOD    : rewrite instruction at PC+ACC to R0
+    CHARMELEON  = 142 # CHECKPOINT  : save state to slot ACC (0-7)
+    ELECTABUZZ  = 143 # RESTORE     : load state from slot ACC
+    HITMONCHAN  = 144 # TIME_TRAVEL : rewind to checkpoint ACC
+    JIGGLYPUFF  = 145 # PARALLEL    : spawn thread at PC=ACC
+    KANGASKHAN  = 146 # ATOMIC_BEG  : disable interrupts
+    TENTACRUEL  = 147 # ATOMIC_END  : re-enable
+    VICTREEBEL  = 148 # FREEZE      : pause other threads
+    WEEPINBELL  = 149 # THAW        : resume threads
+    WIGGLYTUFF  = 150 # BURN        : secure erase all
+
+    # ─── ESPECIAL ───
+    MEW         = 151 # META        : NOP + flag "Mew encountered"
+
 
 
 # ════════════════════════════════════════════════════════════════════════
@@ -184,54 +187,150 @@ class OpCode(IntEnum):
 # ════════════════════════════════════════════════════════════════════════
 
 NAME_TO_OPCODE = {
-    'bulbasaur': OpCode.BULBASAUR, 'ivysaur': OpCode.IVYSAUR, 'venusaur': OpCode.VENUSAUR,
-    'charmander': OpCode.CHARMANDER, 'charmeleon': OpCode.CHARMELEON, 'charizard': OpCode.CHARIZARD,
-    'squirtle': OpCode.SQUIRTLE, 'wartortle': OpCode.WARTORTLE, 'blastoise': OpCode.BLASTOISE,
-    'caterpie': OpCode.CATERPIE, 'metapod': OpCode.METAPOD, 'butterfree': OpCode.BUTTERFREE,
-    'weedle': OpCode.WEEDLE, 'kakuna': OpCode.KAKUNA, 'beedrill': OpCode.BEEDRILL,
-    'pidgey': OpCode.PIDGEY, 'pidgeotto': OpCode.PIDGEOTTO, 'pidgeot': OpCode.PIDGEOT,
+    'abra': OpCode.ABRA,
+    'jynx': OpCode.JYNX,
+    'arbok': OpCode.ARBOK,
+    'gengar': OpCode.GENGAR,
+    'magmar': OpCode.MAGMAR,
+    'mankey': OpCode.MANKEY,
+    'meowth': OpCode.MEOWTH,
+    'oddish': OpCode.ODDISH,
+    'eevee': OpCode.EEVEE,
+    'pidgey': OpCode.PIDGEY,
+    'pinsir': OpCode.PINSIR,
+    'raichu': OpCode.RAICHU,
+    'rhydon': OpCode.RHYDON,
+    'seadra': OpCode.SEADRA,
+    'zubat': OpCode.ZUBAT,
+    'staryu': OpCode.STARYU,
+    'tauros': OpCode.TAUROS,
+    'vulpix': OpCode.VULPIX,
+    'weedle': OpCode.WEEDLE,
+    'golbat': OpCode.GOLBAT,
+    'grimer': OpCode.GRIMER,
+    'cubone': OpCode.CUBONE,
+    'dodrio': OpCode.DODRIO,
+    'horsea': OpCode.HORSEA,
+    'zapdos': OpCode.ZAPDOS,
+    'chansey': OpCode.CHANSEY,
+    'dewgong': OpCode.DEWGONG,
+    'diglett': OpCode.DIGLETT,
+    'drowzee': OpCode.DROWZEE,
+    'dugtrio': OpCode.DUGTRIO,
+    'fearow': OpCode.FEAROW,
+    'gastly': OpCode.GASTLY,
+    'flareon': OpCode.FLAREON,
+    'geodude': OpCode.GEODUDE,
+    'goldeen': OpCode.GOLDEEN,
+    'golduck': OpCode.GOLDUCK,
+    'haunter': OpCode.HAUNTER,
+    'doduo': OpCode.DODUO,
+    'ivysaur': OpCode.IVYSAUR,
+    'jolteon': OpCode.JOLTEON,
+    'kadabra': OpCode.KADABRA,
+    'kingler': OpCode.KINGLER,
+    'koffing': OpCode.KOFFING,
+    'machamp': OpCode.MACHAMP,
+    'machoke': OpCode.MACHOKE,
+    'muk': OpCode.MUK,
+    'onix': OpCode.ONIX,
+    'ekans': OpCode.EKANS,
+    'marowak': OpCode.MAROWAK,
+    'metapod': OpCode.METAPOD,
+    'moltres': OpCode.MOLTRES,
+    'mr_mime': OpCode.MR_MIME,
+    'omanyte': OpCode.OMANYTE,
+    'omastar': OpCode.OMASTAR,
+    'persian': OpCode.PERSIAN,
+    'pidgeot': OpCode.PIDGEOT,
+    'pikachu': OpCode.PIKACHU,
+    'kabuto': OpCode.KABUTO,
+    'poliwag': OpCode.POLIWAG,
+    'kakuna': OpCode.KAKUNA,
+    'porygon': OpCode.PORYGON,
+    'krabby': OpCode.KRABBY,
+    'lapras': OpCode.LAPRAS,
+    'psyduck': OpCode.PSYDUCK,
     'rattata': OpCode.RATTATA,
-    'spearow': OpCode.SPEAROW, 'fearow': OpCode.FEAROW, 'ekans': OpCode.EKANS, 'arbok': OpCode.ARBOK,
-    'pikachu': OpCode.PIKACHU, 'raichu': OpCode.RAICHU, 'sandshrew': OpCode.SANDSHREW,
-    'sandslash': OpCode.SANDSLASH, 'nidoran-f': OpCode.NIDORAN_F, 'nidorina': OpCode.NIDORINA,
-    'nidoqueen': OpCode.NIDOQUEEN, 'nidoran-m': OpCode.NIDORAN_M, 'nidorino': OpCode.NIDORINO,
-    'nidoking': OpCode.NIDOKING, 'clefairy': OpCode.CLEFAIRY, 'clefable': OpCode.CLEFABLE,
-    'vulpix': OpCode.VULPIX, 'ninetales': OpCode.NINETALES, 'jigglypuff': OpCode.JIGGLYPUFF,
-    'wigglytuff': OpCode.WIGGLYTUFF, 'zubat': OpCode.ZUBAT, 'golbat': OpCode.GOLBAT,
-    'oddish': OpCode.ODDISH, 'gloom': OpCode.GLOOM, 'vileplume': OpCode.VILEPLUME,
-    'paras': OpCode.PARAS, 'parasect': OpCode.PARASECT, 'venonat': OpCode.VENONAT,
-    'venomoth': OpCode.VENOMOTH, 'diglett': OpCode.DIGLETT, 'dugtrio': OpCode.DUGTRIO,
-    'meowth': OpCode.MEOWTH, 'persian': OpCode.PERSIAN, 'psyduck': OpCode.PSYDUCK,
-    'golduck': OpCode.GOLDUCK, 'mankey': OpCode.MANKEY, 'primeape': OpCode.PRIMEAPE,
-    'growlithe': OpCode.GROWLITHE, 'arcanine': OpCode.ARCANINE, 'poliwag': OpCode.POLIWAG,
-    'poliwhirl': OpCode.POLIWHIRL, 'poliwrath': OpCode.POLIWRATH, 'abra': OpCode.ABRA,
-    'kadabra': OpCode.KADABRA, 'alakazam': OpCode.ALAKAZAM, 'machop': OpCode.MACHOP,
-    'machoke': OpCode.MACHOKE, 'machamp': OpCode.MACHAMP, 'bellsprout': OpCode.BELLSPROUT,
-    'weepinbell': OpCode.WEEPINBELL, 'victreebel': OpCode.VICTREEBEL, 'tentacool': OpCode.TENTACOOL,
-    'tentacruel': OpCode.TENTACRUEL, 'geodude': OpCode.GEODUDE, 'graveler': OpCode.GRAVELER,
-    'golem': OpCode.GOLEM, 'slowpoke': OpCode.SLOWPOKE, 'slowbro': OpCode.SLOWBRO,
-    'magnemite': OpCode.MAGNEMITE, 'magneton': OpCode.MAGNETON, 'farfetchd': OpCode.FARFETCHD,
-    'doduo': OpCode.DODUO, 'dodrio': OpCode.DODRIO, 'seel': OpCode.SEEL, 'dewgong': OpCode.DEWGONG,
-    'grimer': OpCode.GRIMER, 'muk': OpCode.MUK, 'shellder': OpCode.SHELLDER,
-    'cloyster': OpCode.CLOYSTER, 'gastly': OpCode.GASTLY, 'haunter': OpCode.HAUNTER,
-    'gengar': OpCode.GENGAR, 'onix': OpCode.ONIX, 'drowzee': OpCode.DROWZEE,
-    'hypno': OpCode.HYPNO, 'krabby': OpCode.KRABBY, 'kingler': OpCode.KINGLER,
-    'voltorb': OpCode.VOLTORB, 'electrode': OpCode.ELECTRODE, 'exeggcute': OpCode.EXEGGCUTE,
-    'exeggutor': OpCode.EXEGGUTOR, 'cubone': OpCode.CUBONE, 'marowak': OpCode.MAROWAK,
-    'hitmonlee': OpCode.HITMONLEE, 'hitmonchan': OpCode.HITMONCHAN, 'lickitung': OpCode.LICKITUNG,
-    'koffing': OpCode.KOFFING, 'weezing': OpCode.WEEZING, 'rhyhorn': OpCode.RHYHORN,
-    'rhydon': OpCode.RHYDON, 'chansey': OpCode.CHANSEY, 'tangela': OpCode.TANGELA,
-    'kangaskhan': OpCode.KANGASKHAN, 'horsea': OpCode.HORSEA, 'seadra': OpCode.SEADRA,
-    'goldeen': OpCode.GOLDEEN, 'seaking': OpCode.SEAKING, 'staryu': OpCode.STARYU,
-    'starmie': OpCode.STARMIE, 'mr-mime': OpCode.MR_MIME, 'scyther': OpCode.SCYTHER,
-    'jynx': OpCode.JYNX, 'electabuzz': OpCode.ELECTABUZZ, 'magmar': OpCode.MAGMAR,
-    'pinsir': OpCode.PINSIR, 'tauros': OpCode.TAUROS, 'magikarp': OpCode.MAGIKARP,
-    'gyarados': OpCode.GYARADOS, 'lapras': OpCode.LAPRAS, 'ditto': OpCode.DITTO,
-    'eevee': OpCode.EEVEE, 'vaporeon': OpCode.VAPOREON, 'jolteon': OpCode.JOLTEON,
-    'flareon': OpCode.FLAREON, 'porygon': OpCode.PORYGON, 'omanyte': OpCode.OMANYTE,
-    'omastar': OpCode.OMASTAR, 'kabuto': OpCode.KABUTO, 'kabutops': OpCode.KABUTOPS,
-    'aerodactyl': OpCode.AERODACTYL, 'snorlax': OpCode.SNORLAX, 'articuno': OpCode.ARTICUNO,
-    'zapdos': OpCode.ZAPDOS, 'moltres': OpCode.MOLTRES, 'mew': OpCode.MEW,
+    'rhyhorn': OpCode.RHYHORN,
+    'scyther': OpCode.SCYTHER,
+    'seaking': OpCode.SEAKING,
+    'slowbro': OpCode.SLOWBRO,
+    'snorlax': OpCode.SNORLAX,
+    'spearow': OpCode.SPEAROW,
+    'starmie': OpCode.STARMIE,
+    'tangela': OpCode.TANGELA,
+    'venonat': OpCode.VENONAT,
+    'voltorb': OpCode.VOLTORB,
+    'gloom': OpCode.GLOOM,
+    'golem': OpCode.GOLEM,
+    'weezing': OpCode.WEEZING,
+    'alakazam': OpCode.ALAKAZAM,
+    'arcanine': OpCode.ARCANINE,
+    'articuno': OpCode.ARTICUNO,
+    'beedrill': OpCode.BEEDRILL,
+    'caterpie': OpCode.CATERPIE,
+    'clefable': OpCode.CLEFABLE,
+    'clefairy': OpCode.CLEFAIRY,
+    'cloyster': OpCode.CLOYSTER,
+    'graveler': OpCode.GRAVELER,
+    'gyarados': OpCode.GYARADOS,
+    'kabutops': OpCode.KABUTOPS,
+    'hypno': OpCode.HYPNO,
+    'magikarp': OpCode.MAGIKARP,
+    'magneton': OpCode.MAGNETON,
+    'nidoking': OpCode.NIDOKING,
+    'ditto': OpCode.DITTO,
+    'nidorina': OpCode.NIDORINA,
+    'nidorino': OpCode.NIDORINO,
+    'parasect': OpCode.PARASECT,
+    'primeape': OpCode.PRIMEAPE,
+    'shellder': OpCode.SHELLDER,
+    'slowpoke': OpCode.SLOWPOKE,
+    'squirtle': OpCode.SQUIRTLE,
+    'vaporeon': OpCode.VAPOREON,
+    'venomoth': OpCode.VENOMOTH,
+    'venusaur': OpCode.VENUSAUR,
+    'blastoise': OpCode.BLASTOISE,
+    'bulbasaur': OpCode.BULBASAUR,
+    'charizard': OpCode.CHARIZARD,
+    'paras': OpCode.PARAS,
+    'seel': OpCode.SEEL,
+    'electrode': OpCode.ELECTRODE,
+    'machop': OpCode.MACHOP,
+    'exeggcute': OpCode.EXEGGCUTE,
+    'exeggutor': OpCode.EXEGGUTOR,
+    'farfetchd': OpCode.FARFETCHD,
+    'growlithe': OpCode.GROWLITHE,
+    'hitmonlee': OpCode.HITMONLEE,
+    'lickitung': OpCode.LICKITUNG,
+    'magnemite': OpCode.MAGNEMITE,
+    'nidoqueen': OpCode.NIDOQUEEN,
+    'nidoran_f': OpCode.NIDORAN_F,
+    'nidoran_m': OpCode.NIDORAN_M,
+    'ninetales': OpCode.NINETALES,
+    'pidgeotto': OpCode.PIDGEOTTO,
+    'poliwhirl': OpCode.POLIWHIRL,
+    'poliwrath': OpCode.POLIWRATH,
+    'sandshrew': OpCode.SANDSHREW,
+    'sandslash': OpCode.SANDSLASH,
+    'tentacool': OpCode.TENTACOOL,
+    'vileplume': OpCode.VILEPLUME,
+    'wartortle': OpCode.WARTORTLE,
+    'aerodactyl': OpCode.AERODACTYL,
+    'bellsprout': OpCode.BELLSPROUT,
+    'butterfree': OpCode.BUTTERFREE,
+    'charmander': OpCode.CHARMANDER,
+    'charmeleon': OpCode.CHARMELEON,
+    'electabuzz': OpCode.ELECTABUZZ,
+    'hitmonchan': OpCode.HITMONCHAN,
+    'jigglypuff': OpCode.JIGGLYPUFF,
+    'kangaskhan': OpCode.KANGASKHAN,
+    'tentacruel': OpCode.TENTACRUEL,
+    'victreebel': OpCode.VICTREEBEL,
+    'weepinbell': OpCode.WEEPINBELL,
+    'wigglytuff': OpCode.WIGGLYTUFF,
+    'mew': OpCode.MEW,
 }
 
 
@@ -243,150 +342,150 @@ NAME_TO_OPCODE = {
 # ═════════════════════════════════════════════════════════════════════
 
 _DISPATCH_TABLE: dict[OpCode, Callable] = {
-    OpCode.BULBASAUR:    lambda self: self.exec_bulbasaur(),
-    OpCode.IVYSAUR:      lambda self: self.exec_ivysaur(),
-    OpCode.VENUSAUR:     lambda self: self.exec_venusaur(),
-    OpCode.CHARMANDER:   lambda self: self.exec_charmander(),
-    OpCode.CHARMELEON:   lambda self: self.exec_charmeleon(),
-    OpCode.CHARIZARD:    lambda self: self.exec_charizard(),
-    OpCode.SQUIRTLE:     lambda self: self.exec_squirtle(),
-    OpCode.WARTORTLE:    lambda self: self.exec_wartortle(),
-    OpCode.BLASTOISE:    lambda self: self.exec_blastoise(),
-    OpCode.CATERPIE:     lambda self: self.exec_caterpie(),
-    OpCode.METAPOD:      lambda self: self.exec_metapod(),
-    OpCode.BUTTERFREE:   lambda self: self.exec_butterfree(),
-    OpCode.WEEDLE:       lambda self: self.exec_weedle(),
-    OpCode.KAKUNA:       lambda self: self.exec_kakuna(),
-    OpCode.BEEDRILL:     lambda self: self.exec_beedrill(),
-    OpCode.PIDGEY:       lambda self: self.exec_pidgey(),
-    OpCode.PIDGEOTTO:    lambda self: self.exec_pidgeotto(),
-    OpCode.PIDGEOT:      lambda self: self.exec_pidgeot(),
-    OpCode.RATTATA:      lambda self: self.exec_rattata(),
-    OpCode.SPEAROW:      lambda self: self.exec_spearow(),
-    OpCode.FEAROW:       lambda self: self.exec_fearow(),
-    OpCode.EKANS:        lambda self: self.exec_ekans(),
-    OpCode.ARBOK:        lambda self: self.exec_arbok(),
-    OpCode.PIKACHU:      lambda self: self.exec_pikachu(),
-    OpCode.RAICHU:       lambda self: self.exec_raichu(),
-    OpCode.SANDSHREW:    lambda self: self.exec_sandshrew(),
-    OpCode.SANDSLASH:    lambda self: self.exec_sandslash(),
-    OpCode.NIDORAN_F:    lambda self: self.exec_nidoran_f(),
-    OpCode.NIDORINA:     lambda self: self.exec_nidorina(),
-    OpCode.NIDOQUEEN:    lambda self: self.exec_nidoqueen(),
-    OpCode.NIDORAN_M:    lambda self: self.exec_nidoran_m(),
-    OpCode.NIDORINO:     lambda self: self.exec_nidorino(),
-    OpCode.NIDOKING:     lambda self: self.exec_nidoking(),
-    OpCode.CLEFAIRY:     lambda self: self.exec_clefairy(),
-    OpCode.CLEFABLE:     lambda self: self.exec_clefable(),
-    OpCode.VULPIX:       lambda self: self.exec_vulpix(),
-    OpCode.NINETALES:    lambda self: self.exec_ninetales(),
-    OpCode.JIGGLYPUFF:   lambda self: self.exec_jigglypuff(),
-    OpCode.WIGGLYTUFF:   lambda self: self.exec_wigglytuff(),
-    OpCode.ZUBAT:        lambda self: self.exec_zubat(),
-    OpCode.GOLBAT:       lambda self: self.exec_golbat(),
-    OpCode.ODDISH:       lambda self: self.exec_oddish(),
-    OpCode.GLOOM:        lambda self: self.exec_gloom(),
-    OpCode.VILEPLUME:    lambda self: self.exec_vileplume(),
-    OpCode.PARAS:        lambda self: self.exec_paras(),
-    OpCode.PARASECT:     lambda self: self.exec_parasect(),
-    OpCode.VENONAT:      lambda self: self.exec_venonat(),
-    OpCode.VENOMOTH:     lambda self: self.exec_venomoth(),
-    OpCode.DIGLETT:      lambda self: self.exec_diglett(),
-    OpCode.DUGTRIO:      lambda self: self.exec_dugtrio(),
-    OpCode.MEOWTH:       lambda self: self.exec_meowth(),
-    OpCode.PERSIAN:      lambda self: self.exec_persian(),
-    OpCode.PSYDUCK:      lambda self: self.exec_psyduck(),
-    OpCode.GOLDUCK:      lambda self: self.exec_golduck(),
-    OpCode.MANKEY:       lambda self: self.exec_mankey(),
-    OpCode.PRIMEAPE:     lambda self: self.exec_primeape(),
-    OpCode.GROWLITHE:    lambda self: self.exec_growlithe(),
-    OpCode.ARCANINE:     lambda self: self.exec_arcanine(),
-    OpCode.POLIWAG:      lambda self: self.exec_poliwag(),
-    OpCode.POLIWHIRL:    lambda self: self.exec_poliwhirl(),
-    OpCode.POLIWRATH:    lambda self: self.exec_poliwrath(),
-    OpCode.ABRA:         lambda self: self.exec_abra(),
-    OpCode.KADABRA:      lambda self: self.exec_kadabra(),
-    OpCode.ALAKAZAM:     lambda self: self.exec_alakazam(),
-    OpCode.MACHOP:       lambda self: self.exec_machop(),
-    OpCode.MACHOKE:      lambda self: self.exec_machoke(),
-    OpCode.MACHAMP:      lambda self: self.exec_machamp(),
-    OpCode.BELLSPROUT:   lambda self: self.exec_bellsprout(),
-    OpCode.WEEPINBELL:   lambda self: self.exec_weepinbell(),
-    OpCode.VICTREEBEL:   lambda self: self.exec_victreebel(),
-    OpCode.TENTACOOL:    lambda self: self.exec_tentacool(),
-    OpCode.TENTACRUEL:   lambda self: self.exec_tentacruel(),
-    OpCode.GEODUDE:      lambda self: self.exec_geodude(),
-    OpCode.GRAVELER:     lambda self: self.exec_graveler(),
-    OpCode.GOLEM:        lambda self: self.exec_golem(),
-    OpCode.SLOWPOKE:     lambda self: self.exec_slowpoke(),
-    OpCode.SLOWBRO:      lambda self: self.exec_slowbro(),
-    OpCode.MAGNEMITE:    lambda self: self.exec_magnemite(),
-    OpCode.MAGNETON:     lambda self: self.exec_magneton(),
-    OpCode.FARFETCHD:    lambda self: self.exec_farfetchd(),
-    OpCode.DODUO:        lambda self: self.exec_doduo(),
-    OpCode.DODRIO:       lambda self: self.exec_dodrio(),
-    OpCode.SEEL:         lambda self: self.exec_seel(),
-    OpCode.DEWGONG:      lambda self: self.exec_dewgong(),
-    OpCode.GRIMER:       lambda self: self.exec_grimer(),
-    OpCode.MUK:          lambda self: self.exec_muk(),
-    OpCode.SHELLDER:     lambda self: self.exec_shellder(),
-    OpCode.CLOYSTER:     lambda self: self.exec_cloyster(),
-    OpCode.GASTLY:       lambda self: self.exec_gastly(),
-    OpCode.HAUNTER:      lambda self: self.exec_haunter(),
-    OpCode.GENGAR:       lambda self: self.exec_gengar(),
-    OpCode.ONIX:         lambda self: self.exec_onix(),
-    OpCode.DROWZEE:      lambda self: self.exec_drowzee(),
-    OpCode.HYPNO:        lambda self: self.exec_hypno(),
-    OpCode.KRABBY:       lambda self: self.exec_krabby(),
-    OpCode.KINGLER:      lambda self: self.exec_kingler(),
-    OpCode.VOLTORB:      lambda self: self.exec_voltorb(),
-    OpCode.ELECTRODE:    lambda self: self.exec_electrode(),
-    OpCode.EXEGGCUTE:    lambda self: self.exec_exeggcute(),
-    OpCode.EXEGGUTOR:    lambda self: self.exec_exeggutor(),
-    OpCode.CUBONE:       lambda self: self.exec_cubone(),
-    OpCode.MAROWAK:      lambda self: self.exec_marowak(),
-    OpCode.HITMONLEE:    lambda self: self.exec_hitmonlee(),
-    OpCode.HITMONCHAN:   lambda self: self.exec_hitmonchan(),
-    OpCode.LICKITUNG:    lambda self: self.exec_lickitung(),
-    OpCode.KOFFING:      lambda self: self.exec_koffing(),
-    OpCode.WEEZING:      lambda self: self.exec_weezing(),
-    OpCode.RHYHORN:      lambda self: self.exec_rhyhorn(),
-    OpCode.RHYDON:       lambda self: self.exec_rhydon(),
-    OpCode.CHANSEY:      lambda self: self.exec_chansey(),
-    OpCode.TANGELA:      lambda self: self.exec_tangela(),
-    OpCode.KANGASKHAN:   lambda self: self.exec_kangaskhan(),
-    OpCode.HORSEA:       lambda self: self.exec_horsea(),
-    OpCode.SEADRA:       lambda self: self.exec_seadra(),
-    OpCode.GOLDEEN:      lambda self: self.exec_goldeen(),
-    OpCode.SEAKING:      lambda self: self.exec_seaking(),
-    OpCode.STARYU:       lambda self: self.exec_staryu(),
-    OpCode.STARMIE:      lambda self: self.exec_starmie(),
-    OpCode.MR_MIME:      lambda self: self.exec_mr_mime(),
-    OpCode.SCYTHER:      lambda self: self.exec_scyther(),
-    OpCode.JYNX:         lambda self: self.exec_jynx(),
-    OpCode.ELECTABUZZ:   lambda self: self.exec_electabuzz(),
-    OpCode.MAGMAR:       lambda self: self.exec_magmar(),
-    OpCode.PINSIR:       lambda self: self.exec_pinsir(),
-    OpCode.TAUROS:       lambda self: self.exec_tauros(),
-    OpCode.MAGIKARP:     lambda self: self.exec_magikarp(),
-    OpCode.GYARADOS:     lambda self: self.exec_gyarados(),
-    OpCode.LAPRAS:       lambda self: self.exec_lapras(),
-    OpCode.DITTO:        lambda self: self.exec_ditto(),
-    OpCode.EEVEE:        lambda self: self.exec_eevee(),
-    OpCode.VAPOREON:     lambda self: self.exec_vaporeon(),
-    OpCode.JOLTEON:      lambda self: self.exec_jolteon(),
-    OpCode.FLAREON:      lambda self: self.exec_flareon(),
-    OpCode.PORYGON:      lambda self: self.exec_porygon(),
-    OpCode.OMANYTE:      lambda self: self.exec_omanyte(),
-    OpCode.OMASTAR:      lambda self: self.exec_omastar(),
-    OpCode.KABUTO:       lambda self: self.exec_kabuto(),
-    OpCode.KABUTOPS:     lambda self: self.exec_kabutops(),
-    OpCode.AERODACTYL:   lambda self: self.exec_aerodactyl(),
-    OpCode.SNORLAX:      lambda self: self.exec_snorlax(),
-    OpCode.ARTICUNO:     lambda self: self.exec_articuno(),
-    OpCode.ZAPDOS:       lambda self: self.exec_zapdos(),
-    OpCode.MOLTRES:      lambda self: self.exec_moltres(),
-    OpCode.MEW:          lambda self: self.exec_mew(),
+    OpCode.ABRA      : lambda self: self.exec_bulbasaur(),
+    OpCode.JYNX      : lambda self: self.exec_ivysaur(),
+    OpCode.ARBOK     : lambda self: self.exec_venusaur(),
+    OpCode.GENGAR    : lambda self: self.exec_charmander(),
+    OpCode.MAGMAR    : lambda self: self.exec_charmeleon(),
+    OpCode.MANKEY    : lambda self: self.exec_charizard(),
+    OpCode.MEOWTH    : lambda self: self.exec_squirtle(),
+    OpCode.ODDISH    : lambda self: self.exec_wartortle(),
+    OpCode.EEVEE     : lambda self: self.exec_blastoise(),
+    OpCode.PIDGEY    : lambda self: self.exec_caterpie(),
+    OpCode.PINSIR    : lambda self: self.exec_metapod(),
+    OpCode.RAICHU    : lambda self: self.exec_butterfree(),
+    OpCode.RHYDON    : lambda self: self.exec_weedle(),
+    OpCode.SEADRA    : lambda self: self.exec_kakuna(),
+    OpCode.ZUBAT     : lambda self: self.exec_beedrill(),
+    OpCode.STARYU    : lambda self: self.exec_pidgey(),
+    OpCode.TAUROS    : lambda self: self.exec_pidgeotto(),
+    OpCode.VULPIX    : lambda self: self.exec_pidgeot(),
+    OpCode.WEEDLE    : lambda self: self.exec_rattata(),
+    OpCode.GOLBAT    : lambda self: self.exec_spearow(),
+    OpCode.GRIMER    : lambda self: self.exec_fearow(),
+    OpCode.CUBONE    : lambda self: self.exec_ekans(),
+    OpCode.DODRIO    : lambda self: self.exec_arbok(),
+    OpCode.HORSEA    : lambda self: self.exec_pikachu(),
+    OpCode.ZAPDOS    : lambda self: self.exec_raichu(),
+    OpCode.CHANSEY   : lambda self: self.exec_sandshrew(),
+    OpCode.DEWGONG   : lambda self: self.exec_sandslash(),
+    OpCode.DIGLETT   : lambda self: self.exec_nidoran_f(),
+    OpCode.DROWZEE   : lambda self: self.exec_nidorina(),
+    OpCode.DUGTRIO   : lambda self: self.exec_nidoqueen(),
+    OpCode.FEAROW    : lambda self: self.exec_nidoran_m(),
+    OpCode.GASTLY    : lambda self: self.exec_nidorino(),
+    OpCode.FLAREON   : lambda self: self.exec_nidoking(),
+    OpCode.GEODUDE   : lambda self: self.exec_clefairy(),
+    OpCode.GOLDEEN   : lambda self: self.exec_clefable(),
+    OpCode.GOLDUCK   : lambda self: self.exec_vulpix(),
+    OpCode.HAUNTER   : lambda self: self.exec_ninetales(),
+    OpCode.DODUO     : lambda self: self.exec_jigglypuff(),
+    OpCode.IVYSAUR   : lambda self: self.exec_wigglytuff(),
+    OpCode.JOLTEON   : lambda self: self.exec_zubat(),
+    OpCode.KADABRA   : lambda self: self.exec_golbat(),
+    OpCode.KINGLER   : lambda self: self.exec_oddish(),
+    OpCode.KOFFING   : lambda self: self.exec_gloom(),
+    OpCode.MACHAMP   : lambda self: self.exec_vileplume(),
+    OpCode.MACHOKE   : lambda self: self.exec_paras(),
+    OpCode.MUK       : lambda self: self.exec_parasect(),
+    OpCode.ONIX      : lambda self: self.exec_venonat(),
+    OpCode.EKANS     : lambda self: self.exec_venomoth(),
+    OpCode.MAROWAK   : lambda self: self.exec_diglett(),
+    OpCode.METAPOD   : lambda self: self.exec_dugtrio(),
+    OpCode.MOLTRES   : lambda self: self.exec_meowth(),
+    OpCode.MR_MIME   : lambda self: self.exec_persian(),
+    OpCode.OMANYTE   : lambda self: self.exec_psyduck(),
+    OpCode.OMASTAR   : lambda self: self.exec_golduck(),
+    OpCode.PERSIAN   : lambda self: self.exec_mankey(),
+    OpCode.PIDGEOT   : lambda self: self.exec_primeape(),
+    OpCode.PIKACHU   : lambda self: self.exec_growlithe(),
+    OpCode.KABUTO    : lambda self: self.exec_arcanine(),
+    OpCode.POLIWAG   : lambda self: self.exec_poliwag(),
+    OpCode.KAKUNA    : lambda self: self.exec_poliwhirl(),
+    OpCode.PORYGON   : lambda self: self.exec_poliwrath(),
+    OpCode.KRABBY    : lambda self: self.exec_abra(),
+    OpCode.LAPRAS    : lambda self: self.exec_kadabra(),
+    OpCode.PSYDUCK   : lambda self: self.exec_alakazam(),
+    OpCode.RATTATA   : lambda self: self.exec_machop(),
+    OpCode.RHYHORN   : lambda self: self.exec_machoke(),
+    OpCode.SCYTHER   : lambda self: self.exec_machamp(),
+    OpCode.SEAKING   : lambda self: self.exec_bellsprout(),
+    OpCode.SLOWBRO   : lambda self: self.exec_weepinbell(),
+    OpCode.SNORLAX   : lambda self: self.exec_victreebel(),
+    OpCode.SPEAROW   : lambda self: self.exec_tentacool(),
+    OpCode.STARMIE   : lambda self: self.exec_tentacruel(),
+    OpCode.TANGELA   : lambda self: self.exec_geodude(),
+    OpCode.VENONAT   : lambda self: self.exec_graveler(),
+    OpCode.VOLTORB   : lambda self: self.exec_golem(),
+    OpCode.GLOOM     : lambda self: self.exec_slowpoke(),
+    OpCode.GOLEM     : lambda self: self.exec_slowbro(),
+    OpCode.WEEZING   : lambda self: self.exec_magnemite(),
+    OpCode.ALAKAZAM  : lambda self: self.exec_magneton(),
+    OpCode.ARCANINE  : lambda self: self.exec_farfetchd(),
+    OpCode.ARTICUNO  : lambda self: self.exec_doduo(),
+    OpCode.BEEDRILL  : lambda self: self.exec_dodrio(),
+    OpCode.CATERPIE  : lambda self: self.exec_seel(),
+    OpCode.CLEFABLE  : lambda self: self.exec_dewgong(),
+    OpCode.CLEFAIRY  : lambda self: self.exec_grimer(),
+    OpCode.CLOYSTER  : lambda self: self.exec_muk(),
+    OpCode.GRAVELER  : lambda self: self.exec_shellder(),
+    OpCode.GYARADOS  : lambda self: self.exec_cloyster(),
+    OpCode.KABUTOPS  : lambda self: self.exec_gastly(),
+    OpCode.HYPNO     : lambda self: self.exec_haunter(),
+    OpCode.MAGIKARP  : lambda self: self.exec_gengar(),
+    OpCode.MAGNETON  : lambda self: self.exec_onix(),
+    OpCode.NIDOKING  : lambda self: self.exec_drowzee(),
+    OpCode.DITTO     : lambda self: self.exec_hypno(),
+    OpCode.NIDORINA  : lambda self: self.exec_krabby(),
+    OpCode.NIDORINO  : lambda self: self.exec_kingler(),
+    OpCode.PARASECT  : lambda self: self.exec_voltorb(),
+    OpCode.PRIMEAPE  : lambda self: self.exec_electrode(),
+    OpCode.SHELLDER  : lambda self: self.exec_exeggcute(),
+    OpCode.SLOWPOKE  : lambda self: self.exec_exeggutor(),
+    OpCode.SQUIRTLE  : lambda self: self.exec_cubone(),
+    OpCode.VAPOREON  : lambda self: self.exec_marowak(),
+    OpCode.VENOMOTH  : lambda self: self.exec_hitmonlee(),
+    OpCode.VENUSAUR  : lambda self: self.exec_hitmonchan(),
+    OpCode.BLASTOISE : lambda self: self.exec_lickitung(),
+    OpCode.BULBASAUR : lambda self: self.exec_koffing(),
+    OpCode.CHARIZARD : lambda self: self.exec_weezing(),
+    OpCode.PARAS     : lambda self: self.exec_rhyhorn(),
+    OpCode.SEEL      : lambda self: self.exec_rhydon(),
+    OpCode.ELECTRODE : lambda self: self.exec_chansey(),
+    OpCode.MACHOP    : lambda self: self.exec_tangela(),
+    OpCode.EXEGGCUTE : lambda self: self.exec_kangaskhan(),
+    OpCode.EXEGGUTOR : lambda self: self.exec_horsea(),
+    OpCode.FARFETCHD : lambda self: self.exec_seadra(),
+    OpCode.GROWLITHE : lambda self: self.exec_goldeen(),
+    OpCode.HITMONLEE : lambda self: self.exec_seaking(),
+    OpCode.LICKITUNG : lambda self: self.exec_staryu(),
+    OpCode.MAGNEMITE : lambda self: self.exec_starmie(),
+    OpCode.NIDOQUEEN : lambda self: self.exec_mr_mime(),
+    OpCode.NIDORAN_F : lambda self: self.exec_scyther(),
+    OpCode.NIDORAN_M : lambda self: self.exec_jynx(),
+    OpCode.NINETALES : lambda self: self.exec_electabuzz(),
+    OpCode.PIDGEOTTO : lambda self: self.exec_magmar(),
+    OpCode.POLIWHIRL : lambda self: self.exec_pinsir(),
+    OpCode.POLIWRATH : lambda self: self.exec_tauros(),
+    OpCode.SANDSHREW : lambda self: self.exec_magikarp(),
+    OpCode.SANDSLASH : lambda self: self.exec_gyarados(),
+    OpCode.TENTACOOL : lambda self: self.exec_lapras(),
+    OpCode.VILEPLUME : lambda self: self.exec_ditto(),
+    OpCode.WARTORTLE : lambda self: self.exec_eevee(),
+    OpCode.AERODACTYL: lambda self: self.exec_vaporeon(),
+    OpCode.BELLSPROUT: lambda self: self.exec_jolteon(),
+    OpCode.BUTTERFREE: lambda self: self.exec_flareon(),
+    OpCode.CHARMANDER: lambda self: self.exec_porygon(),
+    OpCode.CHARMELEON: lambda self: self.exec_omanyte(),
+    OpCode.ELECTABUZZ: lambda self: self.exec_omastar(),
+    OpCode.HITMONCHAN: lambda self: self.exec_kabuto(),
+    OpCode.JIGGLYPUFF: lambda self: self.exec_kabutops(),
+    OpCode.KANGASKHAN: lambda self: self.exec_aerodactyl(),
+    OpCode.TENTACRUEL: lambda self: self.exec_snorlax(),
+    OpCode.VICTREEBEL: lambda self: self.exec_articuno(),
+    OpCode.WEEPINBELL: lambda self: self.exec_zapdos(),
+    OpCode.WIGGLYTUFF: lambda self: self.exec_moltres(),
+    OpCode.MEW       : lambda self: self.exec_mew(),
 }
 
 @dataclass
@@ -1254,18 +1353,39 @@ class PokecodeVM:
 
 def parse_pokecode(source: str) -> list[int]:
     """Parsea código fuente POKECODE a lista de opcodes.
-    
+
+    Comentarios: lneas que empiezan con # o ; se omiten enteras.
+    Los tokens no reconocidos se ignoran (no son fuzzy).
+
     Mew encoding unario:
     - 1 Mew = MEW (NOP)
-    - N Mews (2-151) = instrucción N-1
-    - >151 Mews = instrucción 151 (MEW) + argumento = count - 151
+    - N Mews (2-151) = opcode (N-1) directamente por VALOR (no por posición de enum)
+    - >151 Mews = opcode 151 (MEW) + argumento = count - 151
     """
-    tokens = source.lower().replace('\n', ' ').replace(',', ' ').replace('.', ' ').split()
+    # Reverse lookup: opcode value -> OpCode member (robusto a gaps)
+    _VAL_TO_OP = {int(op): op for op in OpCode}
+
+    # 1) Descartar líneas de comentario completas (# o ; inicial, tras strip).
+    #    Convertimos el resto a tokens respetando saltos de línea.
+    clean_lines = []
+    for line in source.split('\n'):
+        stripped = line.strip()
+        if stripped.startswith('#') or stripped.startswith(';'):
+            continue
+        # Eliminar comentarios inline (# ... o ; ...) preservando lo anterior
+        for marker in ('#', ';'):
+            idx = line.find(marker)
+            if idx >= 0:
+                line = line[:idx]
+        clean_lines.append(line)
+    clean_source = ' '.join(clean_lines)
+
+    tokens = clean_source.lower().replace(',', ' ').replace('.', ' ').split()
     program = []
     i = 0
     while i < len(tokens):
         token = tokens[i].strip('.,;:()[]{}')
-        if token.startswith('#'):
+        if not token:
             i += 1
             continue
         
@@ -1279,33 +1399,24 @@ def parse_pokecode(source: str) -> list[int]:
             if count == 1:
                 # 1 Mew = MEW (NOP)
                 program.append(OpCode.MEW)
-            elif count <= 151:
-                # N Mews = instrucción N-1
-                # count=2 -> Bulbasaur(1) -> index 0 = count-2
-                # count=151 -> MEW(151) -> index 150 = count-1
-                if count == 151:
-                    target_op = OpCode.MEW
-                else:
-                    target_op = list(OpCode)[count - 2]
+            elif count == 151:
+                # 151 Mews = MEW caso especial recursivo
+                program.append(OpCode.MEW)
+            elif count < 151:
+                # N Mews (2..150) = opcode (N-1) por VALOR directo
+                target_val = count - 1
+                target_op = _VAL_TO_OP.get(target_val, OpCode.MEW)
                 program.append(target_op)
             else:
-                # >151: MEW + argumento = count - 151
-                # Emit MEW followed by argument handling (simplified: just emit MEW)
+                # >151: MEW + argumento = count - 151 (simplificado)
                 program.append(OpCode.MEW)
-                # Note: argument handling would need VM support
             continue
         
-        if token.startswith('#'):
-            i += 1
-            continue
         if token in NAME_TO_OPCODE:
             program.append(NAME_TO_OPCODE[token])
         else:
-            # Try fuzzy match
-            for name, op in NAME_TO_OPCODE.items():
-                if name.startswith(token) or token.startswith(name):
-                    program.append(op)
-                    break
+            # No fuzzy match: si el token no existe, se ignora (comentario/residuo)
+            pass
         i += 1
     return program
 
@@ -1323,45 +1434,69 @@ def run_pokecode(source: str, input_data: str = "", trace: bool = False,
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# EJEMPLOS
+# EJEMPLOS (usa los nombres cortos de la nueva permutación)
 # ═══════════════════════════════════════════════════════════════════════
 
 HELLO_WORLD = """
-# Hello World en POKECODE
-# Inicializar memoria con "Hello World!\n"
-Bulbasaur Ivysaur Venusaur Charmander Charmeleon Charizard
-Squirtle Wartortle Blastoise Caterpie Metapod Butterfree
-Weedle Kakuna Beedrill Pidgey Pidgeotto Pidgeot Rattata
+# Hello World POKECODE - imprime Hi!
 
-# Imprimir cada carácter
-Spearow Fearow Ekans Arbok Pikachu Raichu Sandshrew Sandslash
-Nidoran-f Nidorina Nidoqueen Nidoran-m Nidorino Nidoking
-Clefairy Clefable Vulpix Ninetales Jigglypuff
+# H = 72
+EEVEE ABRA
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK
+JYNX ARBOK
+
+# i = 105
+EEVEE ABRA
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK
+JYNX ARBOK
+
+# ! = 33
+EEVEE ABRA
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK
+JYNX ARBOK
+
+# 
+ = 10
+EEVEE ABRA
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+JYNX
+
+ZUBAT
+DITTO ARBOK DITTO ARBOK DITTO ARBOK DITTO
+DODUO
 """
 
 FIBONACCI = """
-# Fibonacci: imprime primeros N números
-# ACC = N (input), luego imprime secuencia
-Meowth Persian Psyduck Golduck Mankey Primeape Growlithe
-Arcanine Poliwag Poliwhirl Poliwrath Abra Kadabra Alakazam
-Machop Machoke Machamp Bellsprout Weepinbell Victreebel
-Tentacool Tentacruel Geodude Graveler Golem
+# Fibonacci (0,1,1,2,3,5,8,13,21,...) — imprime como números
+# AO: FIBONACCI output > HYPNO caracteres no decimales. Aca usamos
+# MAGIKARP (OUT_NUM) para imprimir como decimal.
+# Setup: ACC=0 (first fib), store MEM[0]=0; ACC=1 (next) store MEM[1]=1
+# Loop: load MEM[1] -> temp, add MEM[0], store MEM[2], shift window
+# (Resultado parcial - ejemplo simplificado.)
+EEVEE ABRA JYNX ARBOK
+MUK JYNX ARBOK
+DODUO
 """
 
 BRAINFUCK_INTERPRETER = """
-# Intérprete Brainfuck mínimo en POKECODE
-# (Traducción directa de los 8 comandos BF)
-# > = Venusaur (PTR_INC)
-# < = Charmander (PTR_DEC)
-# + = Parasect (INC)
-# - = Venomoth (DEC)
-# . = Haunter (OUT)
-# , = Gastly (IN)
-# [ = Ekans (JZ) + Spearow (JMP)
-# ] = Arbok (JNZ) + Fearow (JMP_REL)
-
-Venusaur Charmander Parasect Venomoth Haunter Gastly Ekans Spearow Arbok Fearow
+# Brainfuck mapping (nueva permutación)
+# > = ARBOK (PTR_INC)    < = GENGAR (PTR_DEC)
+# + = MUK (INC)          - = ONIX (DEC)        . = DITTO (OUT_MEM)
+# , = KABUTOPS (IN)      [ = CUBONE (JZ)       ] = DODRIO (JNZ)
 """
+
 
 
 # ═══════════════════════════════════════════════════════════════════════

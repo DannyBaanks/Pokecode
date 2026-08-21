@@ -1,82 +1,39 @@
-# Hello World en POKECODE - versión funcional
-# Carga "Hello World!\n" en memoria y lo imprime
+# Hello World POKECODE - nombres cortos
+# Patrones: EEVEE ABRA = reset ACC=0 ; MUK*N = INC ; JYNX = store ; ARBOK = ptr++ ; ZUBAT = ptr_home ; DITTO = out_mem ; DODUO = halt
 
-# Inicializar memoria con los bytes de "Hello World!\n"
-# Usamos REG para almacenar valores y luego copiarlos a memoria
+# H = 72
+EEVEE ABRA
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK
+JYNX ARBOK
 
-# R0 = 72 (H)
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 8
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 16
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 24
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 32
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 40
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 48
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 56
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 64
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 72
-Rhydon  # REG_SET (R0 = 72)
+# i = 105
+EEVEE ABRA
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK
+JYNX ARBOK
 
-# R1 = 101 (e)
-Parasect Parasect Parasect Parasect Parasect  # 5
-Parasect Parasect Parasect Parasect Parasect  # 10
-Parasect Parasect Parasect Parasect Parasect  # 15
-Parasect Parasect Parasect Parasect Parasect  # 20
-Parasect Parasect Parasect Parasect Parasect  # 25
-Parasect Parasect Parasect Parasect Parasect  # 30
-Parasect Parasect Parasect Parasect Parasect  # 35
-Parasect Parasect Parasect Parasect Parasect  # 40
-Parasect Parasect Parasect Parasect Parasect  # 45
-Parasect Parasect Parasect Parasect Parasect  # 50
-Parasect Parasect Parasect Parasect Parasect  # 55
-Parasect Parasect Parasect Parasect Parasect  # 60
-Parasect Parasect Parasect Parasect Parasect  # 65
-Parasect Parasect Parasect Parasect Parasect  # 70
-Parasect Parasect Parasect Parasect Parasect  # 75
-Parasect Parasect Parasect Parasect Parasect  # 80
-Parasect Parasect Parasect Parasect Parasect  # 85
-Parasect Parasect Parasect Parasect Parasect  # 90
-Parasect Parasect Parasect Parasect Parasect  # 95
-Parasect Parasect Parasect Parasect Parasect  # 100
-Parasect Parasect Parasect Parasect Parasect  # 105
-Rhydon  # R1 = 101
+# ! = 33
+EEVEE ABRA
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK
+JYNX ARBOK
 
-# R2 = 108 (l)
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 8x13=104
-Parasect Parasect Parasect Parasect  # +4 = 108
-Rhydon
+# \n = 10
+EEVEE ABRA
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+JYNX
 
-# R3 = 111 (o)
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 8x13=104
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # +7 = 111
-Rhydon
-
-# R4 = 32 (space)
-Parasect Parasect Parasect Parasect  # 32
-Rhydon
-
-# R5 = 87 (W)
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 64
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 8x10=80
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # +7 = 87
-Rhydon
-
-# R6 = 114 (r)
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 64
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 128
-Parasect Parasect Parasect Parasect Parasect Parasect  # -14 = 114
-Rhydon
-
-# R7 = 100 (d)
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 8x12=96
-Parasect Parasect Parasect Parasect  # +4 = 100
-Rhydon
-
-# R8 = 33 (!)
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 56
-Parasect Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 8x11=88
-Parasect Parasect Parasect Parasect  # -55? This is getting ridiculous
-
-Jigglypuff
-"""
-# Nota: Este enfoque es muy verboso. Mejor usar ejemplos pre-cargados.
-# Ver hello2.pok para versión práctica.
+# output: ptr_home + 4x (DITTO ARBOK) + HALT
+ZUBAT
+DITTO ARBOK DITTO ARBOK DITTO ARBOK DITTO
+DODUO
