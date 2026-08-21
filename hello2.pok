@@ -1,0 +1,35 @@
+# Hello World POKECODE - Versión práctica
+# Usa memoria pre-inicializada + loop para imprimir
+
+# Pre-cargar "Hello World!\n" en memoria[0..12]
+# H=72, e=101, l=108, l=108, o=111, =32, W=87, o=111, r=114, l=108, d=100, !=33, \n=10
+
+# Programa simple: loop 13 veces imprimiendo MEM[PTR] y avanzando PTR
+
+# Setup: PTR = 0, loop count = 13
+Beedrill          # PTR_HOME (PTR = 0)
+Parasect Parasect Parasect Parasect Parasect Parasect Parasect Parasect  # 8
+Parasect Parasect Parasect Parasect Parasect  # +5 = 13
+Nidoran-m         # LOOP_BEG (count=13)
+
+    Hypno          # OUT_MEM (imprime MEM[PTR] como char)
+    Venusaur       # PTR_INC
+    Nidorino       # LOOP_END
+
+Jigglypuff        # HALT
+
+# Datos (se cargan aparte o se puede usar un cargador separado)
+# MEM[0]=72  H
+# MEM[1]=101 e
+# MEM[2]=108 l
+# MEM[3]=108 l
+# MEM[4]=111 o
+# MEM[5]=32  
+# MEM[5]=87  W
+# MEM[6]=111 o
+# MEM[7]=114 r
+# MEM[8]=108 l
+# MEM[9]=100 d
+# MEM[10]=33 !
+# MEM[11]=10 \n
+# MEM[12]=0 terminador
