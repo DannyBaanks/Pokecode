@@ -511,6 +511,15 @@ _DISPATCH_TABLE: dict[OpCode, Callable] = {
     OpCode.MEW       : lambda self: self.exec_mew(),
 }
 
+
+class ParsedProgram(list[int]):
+    """Opcode stream plus parser-only targets for labelled control flow."""
+
+    def __init__(self, opcodes: list[int], jump_targets: dict[int, int]):
+        super().__init__(opcodes)
+        self.jump_targets = jump_targets
+
+
 @dataclass
 class Flags:
     Z: bool = False  # Zero
@@ -532,14 +541,13 @@ class Flags:
 @dataclass
 class PokecodeVM:
     program: list[int]
-    mem_size: int = 65536
     stack_size: int = 256
     call_stack_size: int = 64
     loop_stack_size: int = 32
     checkpoint_slots: int = 8
 
     # ─── State ───
-    mem: list[int] = field(default_factory=list)
+    mem: dict[int, int] = field(default_factory=dict)
     stack: list[int] = field(default_factory=list)
     call_stack: list[int] = field(default_factory=list)
     loop_stack: list[tuple[int, int]] = field(default_factory=list)  # (start_pc, count)
@@ -565,7 +573,8 @@ class PokecodeVM:
     trace_file: Optional[str] = None
 
     def __post_init__(self):
-        self.mem = [0] * self.mem_size
+        self.mem = {}
+        self.jump_targets = getattr(self.program, 'jump_targets', {})
         self.stack = []
         self.call_stack = []
         self.loop_stack = []
@@ -578,11 +587,19 @@ class PokecodeVM:
 
     def _read_mem(self, addr: int) -> int:
         self.mem_reads += 1
-        return self.mem[addr & 0xFFFF]
+        return self.mem.get(addr, 0)
 
     def _write_mem(self, addr: int, value: int):
         self.mem_writes += 1
-        self.mem[addr & 0xFFFF] = value & 0xFF
+        value &= 0xFF
+        if value:
+            self.mem[addr] = value
+        else:
+            self.mem.pop(addr, None)
+
+    def _jump_target(self) -> int:
+        """Use a parser-resolved label when present, otherwise preserve ACC jumps."""
+        return self.jump_targets.get(self.pc - 1, self.acc)
 
     def _push_stack(self, value: int):
         if len(self.stack) >= self.stack_size:
@@ -618,13 +635,13 @@ class PokecodeVM:
         self._write_mem(self.ptr, self.acc)
 
     def exec_venusaur(self):    # PTR_INC
-        self.ptr = (self.ptr + 1) & 0xFFFF
+        self.ptr += 1
 
     def exec_charmander(self):  # PTR_DEC
-        self.ptr = (self.ptr - 1) & 0xFFFF
+        self.ptr -= 1
 
     def exec_charmeleon(self):  # PTR_SET
-        self.ptr = self.acc & 0xFFFF
+        self.ptr = self.acc
 
     def exec_charizard(self):   # PTR_GET
         self.acc = self.ptr & 0xFF
@@ -653,7 +670,7 @@ class PokecodeVM:
             if self._read_mem(self.ptr) == self.acc:
                 self.flags.Z = True
                 return
-            self.ptr = (self.ptr + 1) & 0xFFFF
+            self.ptr += 1
         self.flags.Z = False
 
     def exec_butterfree(self):  # MEM_REV
@@ -665,10 +682,10 @@ class PokecodeVM:
             self._write_mem(end - i, a)
 
     def exec_weedle(self):      # PTR_JMP_FWD
-        self.ptr = (self.ptr + self.acc) & 0xFFFF
+        self.ptr += self.acc
 
     def exec_kakuna(self):      # PTR_JMP_BAK
-        self.ptr = (self.ptr - self.acc) & 0xFFFF
+        self.ptr -= self.acc
 
     def exec_beedrill(self):    # PTR_HOME
         self.ptr = 0
@@ -686,46 +703,46 @@ class PokecodeVM:
             self._write_mem(self.acc + i, self._read_mem(self.ptr + i))
 
     def exec_rattata(self):     # MEM_SNAP
-        snapshot = bytes(self.mem[i] for i in range(32))
+        snapshot = bytes(self._read_mem(i) for i in range(32))
         for b in snapshot:
             self._push_stack(b)
 
     # ─── CONTROL ───
     def exec_spearow(self):     # JMP
-        self.pc = self.acc
+        self.pc = self._jump_target()
 
     def exec_fearow(self):      # JMP_REL
         self.pc = (self.pc + self._to_signed8(self.acc)) % len(self.program)
 
     def exec_ekans(self):       # JZ
         if self.flags.Z:
-            self.pc = self.acc
+            self.pc = self._jump_target()
 
     def exec_arbok(self):       # JNZ
         if not self.flags.Z:
-            self.pc = self.acc
+            self.pc = self._jump_target()
 
     def exec_pikachu(self):     # JN
         if self.flags.N:
-            self.pc = self.acc
+            self.pc = self._jump_target()
 
     def exec_raichu(self):      # JC
         if self.flags.C:
-            self.pc = self.acc
+            self.pc = self._jump_target()
 
     def exec_sandshrew(self):   # JNC
         if not self.flags.C:
-            self.pc = self.acc
+            self.pc = self._jump_target()
 
     def exec_sandslash(self):   # JV
         if self.flags.V:
-            self.pc = self.acc
+            self.pc = self._jump_target()
 
     def exec_nidoran_f(self):   # CALL
         if len(self.call_stack) >= self.call_stack_size:
             raise RuntimeError("Call stack overflow")
         self.call_stack.append(self.pc)
-        self.pc = self.acc
+        self.pc = self._jump_target()
 
     def exec_nidorina(self):    # RET
         if self.call_stack:
@@ -1117,7 +1134,7 @@ class PokecodeVM:
 
     def exec_kingler(self):     # DUMP_MEM
         for i in range(0, 256, 16):
-            line = f"{i:04X}: " + ' '.join(f"{self.mem[i+j]:02X}" for j in range(16))
+            line = f"{i:04X}: " + ' '.join(f"{self._read_mem(i+j):02X}" for j in range(16))
             print(line)
 
     def exec_voltorb(self):     # DUMP_STACK
@@ -1294,7 +1311,7 @@ class PokecodeVM:
     def exec_omanyte(self):     # CHECKPOINT
         slot = self.acc & 7
         self.checkpoints[slot] = {
-            'mem': self.mem[:],
+            'mem': self.mem.copy(),
             'stack': self.stack[:],
             'call_stack': self.call_stack[:],
             'loop_stack': [list(x) for x in self.loop_stack],
@@ -1307,7 +1324,7 @@ class PokecodeVM:
         slot = self.acc & 7
         cp = self.checkpoints[slot]
         if cp:
-            self.mem = cp['mem'][:]
+            self.mem = cp['mem'].copy()
             self.stack = cp['stack'][:]
             self.call_stack = cp['call_stack'][:]
             self.loop_stack = [list(x) for x in cp['loop_stack']]
@@ -1336,7 +1353,7 @@ class PokecodeVM:
         pass
 
     def exec_moltres(self):     # BURN
-        self.mem = [0] * self.mem_size
+        self.mem.clear()
         self.stack.clear()
         self.call_stack.clear()
         self.loop_stack.clear()
@@ -1361,7 +1378,7 @@ class PokecodeVM:
         prog_len = len(self.program)
 
         while not self.halted and self.cycles < max_cycles:
-            if self.pc >= prog_len:
+            if self.pc < 0 or self.pc >= prog_len:
                 self.halted = True
                 break
 
@@ -1395,7 +1412,7 @@ class PokecodeVM:
 # PARSER
 # ═══════════════════════════════════════════════════════════════════════
 
-def parse_pokecode(source: str) -> list[int]:
+def parse_pokecode(source: str) -> ParsedProgram:
     """Parsea código fuente POKECODE a lista de opcodes.
 
     Comentarios: lneas que empiezan con # o ; se omiten enteras.
@@ -1404,7 +1421,11 @@ def parse_pokecode(source: str) -> list[int]:
     Mew encoding unario:
     - 1 Mew = MEW (NOP)
     - N Mews (2-151) = opcode (N-1) directamente por VALOR (no por posición de enum)
-    - >151 Mews = opcode 151 (MEW) + argumento = count - 151
+    - Más de 151 Mews consecutivos no tiene codificación definida y se rechaza.
+
+    Etiquetas de ensamblador (no son instrucciones): ``@bucle:`` declara un
+    destino y ``CUBONE @bucle`` usa ese destino sin limitarlo a ACC de 8 bits.
+    Sin etiqueta, cada salto conserva su semántica histórica de destino en ACC.
     """
     # Reverse lookup: opcode value -> OpCode member (robusto a gaps)
     _VAL_TO_OP = {int(op): op for op in OpCode}
@@ -1426,6 +1447,12 @@ def parse_pokecode(source: str) -> list[int]:
 
     tokens = clean_source.lower().replace(',', ' ').replace('.', ' ').split()
     program = []
+    labels = {}
+    unresolved_jumps = []
+    labelled_jumps = {
+        OpCode.GOLBAT, OpCode.CUBONE, OpCode.DODRIO, OpCode.HORSEA,
+        OpCode.ZAPDOS, OpCode.CHANSEY, OpCode.DEWGONG, OpCode.DIGLETT,
+    }
     i = 0
     while i < len(tokens):
         token = tokens[i].strip('.,;:()[]{}')
@@ -1452,17 +1479,35 @@ def parse_pokecode(source: str) -> list[int]:
                 target_op = _VAL_TO_OP.get(target_val, OpCode.MEW)
                 program.append(target_op)
             else:
-                # >151: MEW + argumento = count - 151 (simplificado)
-                program.append(OpCode.MEW)
+                raise ValueError("una secuencia Mew no puede superar 151 tokens")
+            continue
+
+        if token.startswith('@'):
+            label = token[1:]
+            if not label or label in labels:
+                raise ValueError(f"etiqueta inválida o duplicada: {token}")
+            labels[label] = len(program)
+            i += 1
             continue
         
         if token in NAME_TO_OPCODE:
-            program.append(NAME_TO_OPCODE[token])
+            opcode = NAME_TO_OPCODE[token]
+            program.append(opcode)
+            if opcode in labelled_jumps and i + 1 < len(tokens):
+                target = tokens[i + 1].strip('.,;:()[]{}')
+                if target.startswith('@'):
+                    unresolved_jumps.append((len(program) - 1, target[1:]))
+                    i += 1
         else:
             # No fuzzy match: si el token no existe, se ignora (comentario/residuo)
             pass
         i += 1
-    return program
+    jump_targets = {}
+    for location, label in unresolved_jumps:
+        if label not in labels:
+            raise ValueError(f"etiqueta no definida: @{label}")
+        jump_targets[location] = labels[label]
+    return ParsedProgram(program, jump_targets)
 
 
 def run_pokecode(source: str, input_data: str = "", trace: bool = False,

@@ -189,6 +189,13 @@ def test_mew_encoding():
     vm.run()
     assert vm.mew_encountered == True
     print("  151 Mews = MEW (recursive): PASS")
+
+    try:
+        parse_pokecode(' '.join(['Mew'] * 152))
+        raise AssertionError("152 Mews debe rechazarse: no hay opcode 152")
+    except ValueError:
+        pass
+    print("  152 Mews = rechazado: PASS")
     print("  All Mew encoding tests PASSED\n")
 
 
@@ -218,15 +225,29 @@ def test_brainfuck_reduction():
         assert got == esperado, f"BF {bf!r}: esperaba {esperado}, hubo {got}"
         print(f"  {bf:24s} -> {got}")
 
-    # el techo de 8 bits del PC tiene que reportarse, no colgarse
+    # Los saltos etiquetados no pasan por el ACC de 8 bits.
     hello = ("++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]"
              ">>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.")
-    try:
-        bf_to_pokecode_full(hello)
-        raise AssertionError("Hello World deberia exceder el limite de PC y no lo hizo")
-    except ValueError as e:
-        assert "255" in str(e), f"el error deberia citar el limite: {e}"
-    print("  Hello World rechazado con motivo (PC de 8 bits)\n")
+    assert run_pokecode(bf_to_pokecode_full(hello), max_cycles=3_000_000) == "Hello World!\n"
+    print("  Hello World con saltos etiquetados\n")
+
+
+def test_unbounded_tape_and_labels():
+    """La extensión TC soporta cinta bidireccional y destinos >255."""
+    vm = PokecodeVM(program=parse_pokecode('ARBOK ' * 65_537 + 'MUK JYNX GENGAR ABRA'))
+    vm.run()
+    assert vm.ptr == 65_536
+    assert vm._read_mem(65_537) == 1
+    assert vm.acc == 0
+
+    vm.acc = 3
+    vm.exec_omanyte()
+    vm._write_mem(-1, 9)
+    vm.exec_omastar()
+    assert vm._read_mem(-1) == 0
+
+    source = 'EEVEE ABRA CUBONE @end ' + 'DRATINI ' * 300 + '@end MUK HYPNO DODUO'
+    assert run_pokecode(source) == '\x01'
 
 
 def run_all_tests():
@@ -242,6 +263,7 @@ def run_all_tests():
     test_io()
     test_control_flow()
     test_brainfuck_reduction()
+    test_unbounded_tape_and_labels()
     print("=" * 60)
     print("ALL TESTS COMPLETED")
     print("=" * 60)

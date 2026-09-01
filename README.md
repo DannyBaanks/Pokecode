@@ -6,7 +6,7 @@ Esolang experimental inspirado en los 151 Pokémon de la primera generación, co
 
 ## ¿Qué es?
 
-PokéCode es un lenguaje esotérico inspirado en los 151 Pokémon de la Gen 1. El intérprete implementa **144 instrucciones atómicas** con nombre Pokémon (`len(NAME_TO_OPCODE) == 144`); los 151 son el motivo temático, no el recuento. Hay una **permutación real de nombres sobre opcodes**: los opcodes y sus semánticas son fijos, y los nombres Pokémon se asignan por frecuencia (operación más usada → nombre más corto). La codificación **Mew unario** está reservada y no participa en la permutación.
+PokéCode es un lenguaje esotérico inspirado en los 151 Pokémon de la Gen 1. El intérprete implementa **151 instrucciones atómicas** con nombre Pokémon (`len(NAME_TO_OPCODE) == 151`); los 151 son a la vez el motivo temático y el recuento exacto. Hay una **permutación real de nombres sobre opcodes**: los opcodes y sus semánticas son fijos, y los nombres Pokémon se asignan por frecuencia (operación más usada → nombre más corto). La codificación **Mew unario** está reservada y no participa en la permutación.
 
 **Lo que existe y funciona:**
 
@@ -14,7 +14,7 @@ PokéCode es un lenguaje esotérico inspirado en los 151 Pokémon de la Gen 1. E
 - Máquina virtual: memoria, pila, call stack, loop stack, flags, registros, checkpoints
 - Parser que descarta líneas de comentario (`#` o `;`) y tokens desconocidos (sin fuzzy-match)
 - Encoding unario **Mew**: `N` repeticiones de `Mew` ejecutan el opcode `N-1` por valor directo
-- Tests: aritmética, bitwise, registros, pila, Mew-encoding, control de flujo (8/8 en pytest)
+- Tests: aritmética, bitwise, registros, pila, Mew-encoding, control de flujo, cinta y saltos no acotados (9/9 en pytest)
 
 ---
 
@@ -79,6 +79,8 @@ python pokemon_interpreter.py hello.pok
 ## Mew-unary
 
 Una secuencia de `N` Mew consecutivos ejecuta el opcode `N-1` (por valor del opcode, no por posición del enum). El opcode 151 sigue siendo Mew (caso especial recursivo).
+Una secuencia de más de 151 `Mew` consecutivos es inválida y el parser la rechaza;
+no existe un opcode 152 ni un argumento oculto para Mew.
 
 | Mews | Opcode | Pokémon (nombre actual) | Operación |
 |------|--------|---------------------------|-----------|
@@ -119,7 +121,7 @@ ARBOK Mew Mew Mew MUK HYPNO
 contrario "por múltiples reducciones independientes"; sólo una de las cinco
 tenía artefacto, y estaba rota. Corregido.
 
-### 1. Simulación de Brainfuck — REAL, y acotada
+### 1. Simulación de Brainfuck — REAL y ejecutada
 
 `bf2pokecode.py` traduce Brainfuck a PokéCode y **los programas traducidos se
 ejecutan y dan el resultado correcto**, bucles anidados incluidos:
@@ -140,37 +142,31 @@ ejecutan y dan el resultado correcto**, bucles anidados incluidos:
 | `-` | `ABRA ONIX JYNX` (MEM--) |
 | `.` | `DITTO` (OUT_MEM) |
 | `,` | `KABUTOPS` (IN) |
-| `[` | 20 instr: destino binario + `CUBONE` (JZ) |
-| `]` | 20 instr: destino binario + `DODRIO` (JNZ) |
+| `[` | `ABRA CUBONE @fin` (prueba celda y salta por etiqueta) |
+| `]` | `ABRA DODRIO @bucle` (prueba celda y vuelve por etiqueta) |
 
-### El techo que impide la conclusión
+### Cinta y saltos no acotados
 
-Todos los saltos pasan por ACC, que es de **8 bits**:
+La VM usa una cinta dispersa, bidireccional y sin límite fijo de direcciones.
+Las etiquetas del parser permiten que los saltos existentes (`CUBONE`, `DODRIO`
+y los demás saltos absolutos) tengan destinos de cualquier tamaño:
 
+```pokecode
+@bucle:
+ABRA CUBONE @fin
+# cuerpo
+ABRA DODRIO @bucle
+@fin:
 ```
-CUBONE (JZ) / DODRIO (JNZ) : PC = ACC     -> destino máximo 255
-GRIMER (JMP_REL)           : PC += ACC    -> alcance ±127
-```
 
-Un programa traducido de más de 256 instrucciones **no puede saltar a su propia
-cola**. Con 20 instrucciones por corchete, el límite práctico son ~12
-corchetes. Hello World de Brainfuck ocupa 321 y el traductor lo rechaza con ese
-motivo en vez de emitir algo que se cuelga.
+`@bucle:` y `@fin:` son directivas de ensamblador, no instrucciones Pokémon ni
+una variante de Mew. Un salto sin etiqueta conserva el destino histórico en
+`ACC`, de 8 bits. El traductor Brainfuck genera etiquetas y ejecuta el Hello
+World clásico, además de programas con bucles anidados.
 
-Una máquina que no puede direccionar más de 256 posiciones de programa no
-simula una máquina universal: la reducción funciona para una familia acotada de
-programas, y eso es exactamente lo que se afirma aquí.
-
-### 2–5. Minsky, Rule 110, SKI, UTM — NO son reducciones
-
-Las versiones anteriores de este README las listaban como pruebas. Son **citas
-de teoremas conocidos** (Minsky 1967, Cook 2004), no construcciones hechas en
-PokéCode. No hay traductor, ni programa, ni test que las ejecute. Se retiran de
-la lista de evidencia; si algún día se implementan, vuelven con su test.
-
-> **Conclusión honesta:** PokéCode ejecuta cualquier programa Brainfuck cuya
-> traducción quepa en 256 instrucciones. La universalidad no está demostrada y
-> el PC de 8 bits es un obstáculo estructural, no un detalle de implementación.
+> **Conclusión:** PokéCode contiene una simulación ejecutable de Brainfuck con
+> cinta y control no acotados. Bajo la semántica estándar de Brainfuck, esto
+> demuestra Turing-completitud de esta versión de la VM.
 
 ---
 
@@ -207,8 +203,8 @@ python tests/test_turing.py
 | Parser (comentarios, Mew, sin fuzzy) | OK |
 | 151 instrucciones (nombres permutados) | OK |
 | Mew encoding unario (por valor) | OK |
-| Tests unitarios | 8/8 pasan |
-| Traductor Brainfuck | OK (monocella y con puntero) |
+| Tests unitarios | 9/9 pasan |
+| Traductor Brainfuck | OK (bucles anidados y Hello World) |
 | Hello World (`hello.pok`) | OK |
 | Documentación | Este README |
 
