@@ -1,0 +1,4 @@
+# 070 SNORLAX — BIT_CLR  ACC &= ~(1<<MEM[PTR])
+# Opcode 70
+SNORLAX
+DODUO

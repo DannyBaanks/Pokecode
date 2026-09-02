@@ -1,0 +1,5 @@
+# 028 DIGLETT — CALL  push PC+1; PC = ACC
+# Opcode 28
+DIGLETT @sub
+DODUO
+@sub DROWZEE

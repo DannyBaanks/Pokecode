@@ -1,0 +1,5 @@
+# 011 PINSIR — MEM_FIND  while MEM[PTR]!=ACC: PTR++ (max 256)
+# Opcode 11
+MUK
+PINSIR
+DODUO

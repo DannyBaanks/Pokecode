@@ -1,0 +1,4 @@
+# 068 SEAKING — BIT_TST  Z = !(ACC & (1<<MEM[PTR]))
+# Opcode 68
+SEAKING
+DODUO

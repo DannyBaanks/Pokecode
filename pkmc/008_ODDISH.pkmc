@@ -1,0 +1,4 @@
+# 008 ODDISH — MEM_SWP  swap(MEM[PTR], MEM[PTR+1])
+# Opcode 8
+ODDISH
+DODUO

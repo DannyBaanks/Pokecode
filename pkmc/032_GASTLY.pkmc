@@ -1,0 +1,4 @@
+# 032 GASTLY — LOOP_END  loop_count-- ; if >0: PC = loop_start
+# Opcode 32
+GASTLY
+DODUO

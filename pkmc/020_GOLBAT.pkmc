@@ -1,0 +1,4 @@
+# 020 GOLBAT — JMP  PC = ACC (absoluto, con etiqueta)
+# Opcode 20
+GOLBAT @end
+@end DODUO

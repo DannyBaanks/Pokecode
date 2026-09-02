@@ -1,0 +1,4 @@
+# 010 PIDGEY — MEM_FILL  for i in 0..ACC: MEM[PTR+i] = ACC
+# Opcode 10
+PIDGEY
+DODUO

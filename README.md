@@ -10,11 +10,13 @@ PokéCode es un lenguaje esotérico inspirado en los 151 Pokémon de la Gen 1. E
 
 **Lo que existe y funciona:**
 
-- 144 instrucciones con nombre (semánticas fijas, nombres permutados para minimizar tamaño textual)
+- 151 instrucciones con nombre (semánticas fijas, nombres permutados para minimizar tamaño textual)
 - Máquina virtual: memoria, pila, call stack, loop stack, flags, registros, checkpoints
 - Parser que descarta líneas de comentario (`#` o `;`) y tokens desconocidos (sin fuzzy-match)
 - Encoding unario **Mew**: `N` repeticiones de `Mew` ejecutan el opcode `N-1` por valor directo
-- Tests: aritmética, bitwise, registros, pila, Mew-encoding, control de flujo, cinta y saltos no acotados (9/9 en pytest)
+- Motor público genérico: `pokemon_interpreter.py` + `host.py` (todo en uno, sin dependencias internas) ejecutan `.pkmc` / `.pok`
+- Corpus 151 `.pkmc` en `pkmc/` — uno por opcode, todos verificados con el motor
+- Tests: aritmética, bitwise, registros, pila, Mew-encoding, control de flujo, cinta y saltos no acotados (9/9 en pytest) + 151 corpus
 
 ---
 
@@ -175,15 +177,38 @@ World clásico, además de programas con bucles anidados.
 ```bash
 # Programa inline
 python pokemon_interpreter.py -c "MUK MUK MUK DITTO DODUO"
+python host.py -c "MUK MUK HYPNO DODUO"
 
-# Desde archivo
+# Desde archivo (.pok o .pkmc)
 python pokemon_interpreter.py hello.pok
+python host.py pkmc/046_MUK.pkmc
+python host.py hello.pok --trace
 
-# Solo Mews
+# Solo Mews (47 Mews = MUK)
 python pokemon_interpreter.py -c "Mew " * 47
+python host.py -c "Mew Mew Mew Mew"  # 4 Mews = ARBOK
 
 # Trace
 python pokemon_interpreter.py -c "EEVEE ABRA MUK MUK JYNX ZUBAT DITTO DODUO" --trace
+
+# Corpus completo 151
+python host.py pkmc/001_ABRA.pkmc
+for f in pkmc/*.pkmc; do python host.py "$f" > /dev/null && echo "$f OK"; done
+```
+
+### Motor público
+
+`pokemon_interpreter.py` es el motor todo-en-uno (VM + parser). `host.py` es un wrapper fino del mismo motor para uso público:
+
+- `.pkmc` es la extensión canónica del motor (también acepta `.pok`)
+- Lista las 151: `python host.py --list`
+- Mew sigue siendo **solo unario por valor** (`N` Mews = opcode `N-1`); `@etiqueta:` es directiva de ensamblador para saltos, no una variante de Mew
+
+```bash
+python host.py --list
+#  46  muk
+# 151  mew
+python gen_151_pkmc.py  # regenera y verifica los 151
 ```
 
 ### Tests
@@ -191,6 +216,7 @@ python pokemon_interpreter.py -c "EEVEE ABRA MUK MUK JYNX ZUBAT DITTO DODUO" --t
 ```bash
 python -m pytest tests/test_turing.py -q
 python tests/test_turing.py
+python gen_151_pkmc.py  # verifica 151 .pkmc
 ```
 
 ---
@@ -203,9 +229,11 @@ python tests/test_turing.py
 | Parser (comentarios, Mew, sin fuzzy) | OK |
 | 151 instrucciones (nombres permutados) | OK |
 | Mew encoding unario (por valor) | OK |
+| Motor público (`pokemon_interpreter.py` + `host.py`) | OK — ejecuta `.pkmc` / `.pok` |
+| Corpus 151 `.pkmc` (`pkmc/001_*` … `151_Mew.pkmc`) | 151/151 verificados |
 | Tests unitarios | 9/9 pasan |
 | Traductor Brainfuck | OK (bucles anidados y Hello World) |
-| Hello World (`hello.pok`) | OK |
+| Hello World (`hello.pok` / `pkmc/038_DODUO.pkmc` etc) | OK |
 | Documentación | Este README |
 
 ---

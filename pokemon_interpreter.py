@@ -1357,7 +1357,7 @@ class PokecodeVM:
         self.stack.clear()
         self.call_stack.clear()
         self.loop_stack.clear()
-        self.acc = self.ptr = self.pc = 0
+        self.acc = self.ptr = 0
         self.flags = Flags()
         self.regs = [0] * 16
 
