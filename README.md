@@ -211,6 +211,47 @@ python host.py --list
 python gen_151_pkmc.py  # regenera y verifica los 151
 ```
 
+### Corpus canónico `pkmc/` — 1 opcode → 1 ejemplo visible
+
+`pkmc/` = **canonical opcode examples**. Cada archivo:
+
+- corresponde a **exactamente un opcode**;
+- muestra la **forma mínima válida** de usarlo;
+- sirve como **referencia para humanos y LLMs**;
+- puede **ejecutarse directamente** con el host (`python host.py pkmc/046_MUK.pkmc`);
+- **NO sustituye** los tests semánticos.
+
+> $$ \boxed{ \text{1 opcode} \rightarrow \text{1 ejemplo canónico visible} } $$
+
+Para opcodes complejos el ejemplo es una *flashcard ejecutable* con contexto:
+
+```pokecode
+# PRE: ACC=3
+# POST: stack=[3]
+GLOOM
+DODUO
+```
+
+```pokecode
+# demonstrate JZ — expected branch: @zero
+EEVEE ABRA
+CUBONE @zero
+DRATINI
+@zero:
+DODUO
+```
+
+Separación limpia:
+
+| Carpeta/archivo | Rol |
+|---|---|
+| `pkmc/` | **cómo se usa** |
+| `tests/` | **cómo sabemos que funciona** |
+| `README` / `SPEC` | **qué significa** |
+| `host.py` + `pokemon_interpreter.py` | **cómo se ejecuta** |
+
+Con 151 nombres Pokémon, esto evita que el siguiente humano o LLM tenga que adivinar la forma correcta.
+
 ### Tests
 
 ```bash
