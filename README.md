@@ -260,6 +260,28 @@ python tests/test_turing.py
 python gen_151_pkmc.py  # verifica 151 .pkmc
 ```
 
+### Ejemplos funcionales (no maqueta)
+
+Dos programas en `examples/` demuestran cómputo no trivial sin traductor:
+
+| Ejemplo | Archivo | Qué prueba | Salida |
+|---------|---------|------------|--------|
+| **Fibonacci 10** | `examples/fibonacci.pok` | memoria (`ABRA/JYNX`), puntero (`ZUBAT/ARBOK`), aritmética (`IVYSAUR`), pila (`GLOOM/GOLEM`), saltos etiquetados (`CUBONE/DODRIO @loop`) | `0 1 1 2 3 5 8 13 21 34` |
+| **FizzBuzz 1..15** | `examples/fizzbuzz.pok` | `MACHOKE` (MOD), bifurcaciones anidadas, strings en memoria (`DITTO` x4/x8) | `1 2 Fizz 4 Buzz ... FizzBuzz` |
+
+```bash
+python host.py examples/fibonacci.pok
+# -> 0 1 1 2 3 5 8 13 21 34
+
+python host.py examples/fizzbuzz.pok
+# -> 1 / 2 / Fizz / 4 / Buzz / Fizz / 7 / 8 / Fizz / Buzz / 11 / Fizz / 13 / 14 / FizzBuzz
+
+python pokemon_interpreter.py --example fib
+# usa FIBONACCI integrado (pokemon_interpreter.py:1570)
+```
+
+El `FIBONACCI` anterior era un stub (`EEVEE ABRA JYNX...`). Ahora es el programa verificado anterior.
+
 ---
 
 ## Estado
@@ -275,6 +297,8 @@ python gen_151_pkmc.py  # verifica 151 .pkmc
 | Tests unitarios | 9/9 pasan |
 | Traductor Brainfuck | OK (bucles anidados y Hello World) |
 | Hello World (`hello.pok` / `pkmc/038_DODUO.pkmc` etc) | OK |
+| Fibonacci (`examples/fibonacci.pok` + `--example fib`) | OK — 0 1 1 2 3 5 8 13 21 34 verificado |
+| FizzBuzz (`examples/fizzbuzz.pok`) | OK — 1..15 con MOD y bifurcaciones verificado |
 | Documentación | Este README |
 
 ---

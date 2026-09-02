@@ -1,0 +1,105 @@
+# Fibonacci POKECODE — 10 terminos (0 1 1 2 3 5 8 13 21 34)
+# Demuestra VM completa: memoria, puntero, aritmetica, pila y saltos etiquetados
+# sin traductor externo. Cambia el contador en MEM[2] para mas terminos (max 14 sin wrap 8-bit).
+#
+# Patrones usados:
+#   ZUBAT            = PTR_HOME (PTR=0)
+#   ARBOK            = PTR_INC
+#   ABRA             = MEM_RD (ACC = MEM[PTR])
+#   JYNX             = MEM_WR (MEM[PTR] = ACC)
+#   MUK              = INC (ACC++)
+#   ONIX             = DEC (ACC--)
+#   IVYSAUR          = ADD (ACC = ACC + MEM[PTR])
+#   GLOOM/GOLEM      = PUSH/POP
+#   MAGIKARP         = OUT_NUM (imprime ACC decimal)
+#   DITTO            = OUT_MEM (imprime MEM[PTR] como char)
+#   CUBONE @x        = JZ (salta si Z)
+#   DODRIO @x        = JNZ (salta si !Z)
+#   @etiqueta:       = directiva ensamblador (destino sin limite ACC)
+#   Mew scratch      = celda 10 siempre 0, para cargar inmediatos via MUK
+#   DODUO            = HALT
+#
+# Memoria:
+#   [0]=a (F n-2)  [1]=b (F n-1)  [2]=contador  [3]=espacio (32)  [4]=newline (10)  [10]=scratch 0
+
+# --- INIT: MEM[0]=0 ---
+ZUBAT ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK
+ABRA
+ZUBAT
+JYNX
+
+# --- INIT: MEM[1]=1 ---
+ZUBAT ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK
+ABRA
+MUK
+ZUBAT ARBOK
+JYNX
+
+# --- INIT: MEM[2]=10 (contador) ---
+ZUBAT ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK
+ABRA
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+ZUBAT ARBOK ARBOK
+JYNX
+
+# --- INIT: MEM[3]=32 (espacio) ---
+ZUBAT ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK
+ABRA
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+ZUBAT ARBOK ARBOK ARBOK
+JYNX
+
+# --- INIT: MEM[4]=10 (newline) ---
+ZUBAT ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK ARBOK
+ABRA
+MUK MUK MUK MUK MUK MUK MUK MUK MUK MUK
+ZUBAT ARBOK ARBOK ARBOK ARBOK
+JYNX
+
+# --- LOOP ---
+@loop:
+# imprimir a = MEM[0] como decimal
+ZUBAT
+ABRA
+MAGIKARP
+# imprimir espacio
+ZUBAT ARBOK ARBOK ARBOK
+DITTO
+
+# c = a + b  (ACC = MEM[0] + MEM[1])
+ZUBAT
+ABRA
+ARBOK
+IVYSAUR
+GLOOM
+
+# cargar b
+ZUBAT ARBOK
+ABRA
+GLOOM
+
+# MEM[0] = b
+ZUBAT
+JYNX
+
+# MEM[1] = c  (recupera c de pila)
+GOLEM
+GOLEM
+ZUBAT ARBOK
+JYNX
+
+# contador-- ; si 0 -> @end ; si no -> @loop
+ZUBAT ARBOK ARBOK
+ABRA
+ONIX
+JYNX
+ABRA
+CUBONE @end
+DODRIO @loop
+
+@end:
+# newline final y halt
+ZUBAT ARBOK ARBOK ARBOK ARBOK
+DITTO
+DODUO
